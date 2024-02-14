@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { router } from './src/routes';
+import { router } from './routes';
 import sequelize from './db';
 
 const PORT = process.env.PORT || 5000;
