@@ -1,7 +1,21 @@
 import sequelize from '../db';
 import { DataTypes } from 'sequelize';
+import {
+    AddressModel,
+    CartModel,
+    CartProductModel,
+    DiscountModel,
+    LikeModel,
+    OrderModel,
+    ProductModel,
+    RatingModel,
+    TypeModel,
+    UserModel,
+    WishlistModel,
+    WishlistProductModel,
+} from '../types/sequelizeTypes';
 
-export const User = sequelize.define('user', {
+export const User = sequelize.define<UserModel>('user', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     email: { type: DataTypes.STRING, unique: true, allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
@@ -12,7 +26,7 @@ export const User = sequelize.define('user', {
     role: { type: DataTypes.STRING, allowNull: false, defaultValue: 'USER' },
 });
 
-export const Address = sequelize.define('address', {
+export const Address = sequelize.define<AddressModel>('address', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, allowNull: false },
     recipientName: { type: DataTypes.STRING, allowNull: false },
@@ -24,51 +38,54 @@ export const Address = sequelize.define('address', {
     houseNumber: { type: DataTypes.INTEGER, allowNull: false },
 });
 
-export const Order = sequelize.define('order', {
+export const Order = sequelize.define<OrderModel>('order', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     status: { type: DataTypes.STRING, allowNull: false },
     price: { type: DataTypes.FLOAT, allowNull: false },
 });
 
-export const Cart = sequelize.define('cart', {
+export const Cart = sequelize.define<CartModel>('cart', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
-export const CartProduct = sequelize.define('cart_product', {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    productId: { type: DataTypes.INTEGER, allowNull: false },
-});
-
-export const Wishlist = sequelize.define('wishlist', {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-});
-export const WishlistProduct = sequelize.define('wishlist_product', {
+export const CartProduct = sequelize.define<CartProductModel>('cart_product', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     productId: { type: DataTypes.INTEGER, allowNull: false },
 });
 
-export const Product = sequelize.define('product', {
+export const Wishlist = sequelize.define<WishlistModel>('wishlist', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+});
+export const WishlistProduct = sequelize.define<WishlistProductModel>(
+    'wishlist_product',
+    {
+        id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+        productId: { type: DataTypes.INTEGER, allowNull: false },
+    },
+);
+
+export const Product = sequelize.define<ProductModel>('product', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, unique: false, allowNull: false },
     imageUrl: { type: DataTypes.STRING, unique: false, allowNull: true },
     averageRate: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
     price: { type: DataTypes.FLOAT, allowNull: false },
-    discountPrice: { type: DataTypes.FLOAT, allowNull: false },
+    discountPrice: { type: DataTypes.FLOAT, allowNull: true },
 });
-export const Discount = sequelize.define('discount', {
+export const Discount = sequelize.define<DiscountModel>('discount', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     percent: { type: DataTypes.INTEGER, unique: false, allowNull: false },
     expiresIn: { type: DataTypes.INTEGER, unique: false, allowNull: false },
 });
-export const Type = sequelize.define('type', {
+export const Type = sequelize.define<TypeModel>('type', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
-export const Rating = sequelize.define('rating', {
+export const Rating = sequelize.define<RatingModel>('rating', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    rate: { type: DataTypes.STRING, unique: true, allowNull: false },
-    text: { type: DataTypes.STRING, unique: true, allowNull: false },
+    rate: { type: DataTypes.INTEGER, allowNull: false },
+    text: { type: DataTypes.STRING, allowNull: false },
 });
-export const Like = sequelize.define('like', {
+export const Like = sequelize.define<LikeModel>('like', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
