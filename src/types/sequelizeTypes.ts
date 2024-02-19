@@ -1,9 +1,9 @@
 import {
     CreationOptional,
+    ForeignKey,
     InferAttributes,
     InferCreationAttributes,
     Model,
-    Order,
 } from 'sequelize';
 
 export interface UserModel
@@ -35,6 +35,8 @@ export interface AddressModel
     zipcode: string | null;
     street: string;
     houseNumber: number;
+    userId?: ForeignKey<UserModel['id']>;
+    orderId?: ForeignKey<TypeModel['id']> | null;
 }
 
 export interface OrderModel
@@ -53,6 +55,7 @@ export interface CartModel
         InferCreationAttributes<CartModel>
     > {
     id: CreationOptional<number>;
+    userId?: ForeignKey<UserModel['id']>;
 }
 
 export interface CartProductModel
@@ -62,6 +65,7 @@ export interface CartProductModel
     > {
     id: CreationOptional<number>;
     productId: number;
+    cartId?: ForeignKey<CartModel['id']>;
 }
 export interface WishlistModel
     extends Model<
@@ -69,6 +73,7 @@ export interface WishlistModel
         InferCreationAttributes<WishlistModel>
     > {
     id: CreationOptional<number>;
+    userId?: ForeignKey<UserModel['id']>;
 }
 export interface WishlistProductModel
     extends Model<
@@ -77,6 +82,7 @@ export interface WishlistProductModel
     > {
     id: CreationOptional<number>;
     productId: number;
+    wishlistId?: ForeignKey<WishlistModel['id']>;
 }
 export interface ProductModel
     extends Model<
@@ -98,6 +104,7 @@ export interface DiscountModel
     id: CreationOptional<number>;
     percent: number;
     expiresIn: number;
+    productId?: ForeignKey<ProductModel['id']>;
 }
 export interface TypeModel
     extends Model<
@@ -115,6 +122,9 @@ export interface RatingModel
     id: CreationOptional<number>;
     rate: number;
     text: string;
+    userId?: ForeignKey<UserModel['id']>;
+    productId?: ForeignKey<ProductModel['id']>;
+    typeId?: ForeignKey<TypeModel['id']>;
 }
 export interface LikeModel
     extends Model<
@@ -122,4 +132,5 @@ export interface LikeModel
         InferCreationAttributes<LikeModel>
     > {
     id: CreationOptional<number>;
+    userId?: ForeignKey<UserModel['id']>;
 }

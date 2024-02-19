@@ -90,40 +90,62 @@ export const Like = sequelize.define<LikeModel>('like', {
 });
 
 // User
-User.hasOne(Cart);
+User.hasOne(Cart, {
+    foreignKey: 'userId',
+});
 Cart.belongsTo(User);
 
-User.hasOne(Wishlist);
+User.hasOne(Wishlist, {
+    foreignKey: 'userId',
+});
 Wishlist.belongsTo(User);
 
-User.hasMany(Rating);
+User.hasMany(Rating, {
+    foreignKey: 'userId',
+});
 Rating.belongsTo(User);
 
-User.hasMany(Like);
+User.hasMany(Like, {
+    foreignKey: 'userId',
+});
 Like.belongsTo(User);
 
-User.hasMany(Address);
+User.hasMany(Address, {
+    foreignKey: 'userId',
+});
 Address.belongsTo(User);
 
 // Cart
-Cart.hasMany(CartProduct);
+Cart.hasMany(CartProduct, {
+    foreignKey: 'cartId',
+});
 CartProduct.belongsTo(Cart);
 
 // Wishlist
-Wishlist.hasMany(WishlistProduct);
+Wishlist.hasMany(WishlistProduct, {
+    foreignKey: 'wishlistId',
+});
 WishlistProduct.belongsTo(Wishlist);
 
 // Product
-Product.hasMany(Discount);
+Product.hasMany(Discount, {
+    foreignKey: 'productId',
+});
 Discount.belongsTo(Product);
 
-Product.hasMany(Rating);
+Product.hasMany(Rating, {
+    foreignKey: 'productId',
+});
 Rating.belongsTo(Product);
 
 // Type
-Type.hasMany(Product);
+Type.hasMany(Product, {
+    foreignKey: 'typeId',
+});
 Product.belongsTo(Type);
 
 // Order
-Order.hasOne(Address);
-Address.belongsTo(Order);
+Order.hasOne(Address, {
+    foreignKey: 'orderId',
+});
+Address.belongsToMany(Order, { through: 'orders' });
