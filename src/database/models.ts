@@ -144,8 +144,8 @@ Type.hasMany(Product, {
 });
 Product.belongsTo(Type);
 
-// Order
-Order.hasOne(Address, {
-    foreignKey: 'orderId',
+// Address
+Address.hasMany(Order);
+Order.belongsTo(Address, {
+    foreignKey: 'addressId',
 });
-Address.belongsToMany(Order, { through: 'orders' });

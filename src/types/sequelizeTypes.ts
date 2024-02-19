@@ -36,7 +36,6 @@ export interface AddressModel
     street: string;
     houseNumber: number;
     userId?: ForeignKey<UserModel['id']>;
-    orderId?: ForeignKey<TypeModel['id']> | null;
 }
 
 export interface OrderModel
@@ -47,6 +46,7 @@ export interface OrderModel
     id: CreationOptional<number>;
     status: string;
     price: number;
+    addressId?: ForeignKey<OrderModel['id']>;
 }
 
 export interface CartModel
