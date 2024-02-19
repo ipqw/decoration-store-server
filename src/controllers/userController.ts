@@ -19,7 +19,7 @@ const generateJWT = (id: number, email: string, role: string) => {
 };
 
 class userController {
-    create = async (req: Request, res: Response) => {
+    createUser = async (req: Request, res: Response) => {
         try {
             const streamUpload = (req: Request) => {
                 const img = req.files?.img || { data: '' };
@@ -72,7 +72,7 @@ class userController {
             return res.status(400).json({ message: 'Something went wrong' });
         }
     };
-    getAll = async (req: Request, res: Response) => {
+    getAllUsers = async (req: Request, res: Response) => {
         try {
             const users = await User.findAll();
             return res.json(users);
@@ -80,7 +80,7 @@ class userController {
             return res.status(400).json({ message: 'Something went wrong' });
         }
     };
-    getOne = async (req: Request, res: Response) => {
+    getOneUser = async (req: Request, res: Response) => {
         try {
             const { id } = req.params;
             const user = await User.findOne({ where: { id } });
@@ -89,7 +89,7 @@ class userController {
             return res.status(400).json({ message: 'Something went wrong' });
         }
     };
-    update = async (req: Request, res: Response) => {
+    updateUser = async (req: Request, res: Response) => {
         try {
             const streamUpload = (req: Request) => {
                 const img = req.files?.img || { data: '' };
@@ -137,6 +137,21 @@ class userController {
                 return res.json(user);
             }
             upload(req);
+        } catch (error) {
+            return res.status(400).json({ message: 'Something went wrong' });
+        }
+    };
+    deleteUser = async (req: Request, res: Response) => {
+        try {
+            const { id } = req.params;
+            const user = await User.findOne({ where: { id } });
+
+            if (user) {
+                await user.destroy();
+                return res.json('User was deleted');
+            } else {
+                return res.json('User was not found');
+            }
         } catch (error) {
             return res.status(400).json({ message: 'Something went wrong' });
         }

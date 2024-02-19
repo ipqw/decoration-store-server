@@ -3,7 +3,8 @@ import userController from '../controllers/userController';
 
 export const userRouter = express();
 
-userRouter.get('/', userController.getAll);
-userRouter.get('/:id', userController.getOne);
-userRouter.post('/', userController.create);
-userRouter.put('/:id', userController.update);
+userRouter.get('/', userController.getAllUsers);
+userRouter.get('/:id', userController.getOneUser);
+userRouter.post('/', userController.createUser);
+userRouter.put('/:id', userController.updateUser);
+userRouter.delete('/:id', userController.deleteUser);
