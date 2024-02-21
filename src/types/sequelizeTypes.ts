@@ -46,7 +46,17 @@ export interface OrderModel
     id: CreationOptional<number>;
     status: string;
     price: number;
+    paymentMethod: string;
     addressId?: ForeignKey<OrderModel['id']>;
+    userId?: ForeignKey<UserModel['id']>;
+}
+export interface OrderProductModel
+    extends Model<
+        InferAttributes<OrderProductModel>,
+        InferCreationAttributes<OrderProductModel>
+    > {
+    id: CreationOptional<number>;
+    productId: ForeignKey<ProductModel['id']>;
 }
 
 export interface CartModel

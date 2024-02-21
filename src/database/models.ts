@@ -7,6 +7,7 @@ import {
     DiscountModel,
     LikeModel,
     OrderModel,
+    OrderProductModel,
     ProductModel,
     RatingModel,
     TypeModel,
@@ -42,7 +43,15 @@ export const Order = sequelize.define<OrderModel>('order', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     status: { type: DataTypes.STRING, allowNull: false },
     price: { type: DataTypes.FLOAT, allowNull: false },
+    paymentMethod: { type: DataTypes.STRING, allowNull: false },
 });
+export const OrderProduct = sequelize.define<OrderProductModel>(
+    'order_product',
+    {
+        id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+        productId: { type: DataTypes.INTEGER, allowNull: false },
+    },
+);
 
 export const Cart = sequelize.define<CartModel>('cart', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -115,6 +124,11 @@ User.hasMany(Address, {
 });
 Address.belongsTo(User);
 
+User.hasMany(Order, {
+    foreignKey: 'userId',
+});
+Order.belongsTo(User);
+
 // Cart
 Cart.hasMany(CartProduct, {
     foreignKey: 'cartId',
@@ -148,4 +162,10 @@ Product.belongsTo(Type);
 Address.hasMany(Order);
 Order.belongsTo(Address, {
     foreignKey: 'addressId',
+});
+
+// Order
+Order.hasMany(OrderProduct);
+OrderProduct.belongsTo(Order, {
+    foreignKey: 'orderId',
 });
