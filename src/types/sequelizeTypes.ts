@@ -49,6 +49,7 @@ export interface OrderModel
     paymentMethod: string;
     addressId?: ForeignKey<OrderModel['id']>;
     userId?: ForeignKey<UserModel['id']>;
+    order_products?: OrderProductModel[];
 }
 export interface OrderProductModel
     extends Model<
@@ -56,6 +57,7 @@ export interface OrderProductModel
         InferCreationAttributes<OrderProductModel>
     > {
     id: CreationOptional<number>;
+    orderId?: ForeignKey<OrderModel['id']>;
     productId: ForeignKey<ProductModel['id']>;
 }
 

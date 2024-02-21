@@ -1,12 +1,22 @@
 import { NextFunction, Request, Response } from 'express';
-import { Order } from '../database/models';
+import { Order, OrderProduct } from '../database/models';
 import ApiError from '../error/apiError';
+import { OrderProductModel } from '../types/sequelizeTypes';
 
 class orderController {
     createOrder = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { status, price, addressId, paymentMethod, userId } =
-                req.body;
+            const {
+                status,
+                price,
+                addressId,
+                paymentMethod,
+                userId,
+                products,
+            } = req.body;
+            if (!products) {
+                next(ApiError.badRequest('products are required'));
+            }
             if (!addressId) {
                 next(ApiError.badRequest('addressId is required'));
             }
@@ -20,6 +30,15 @@ class orderController {
                 userId,
                 paymentMethod,
             });
+
+            const parsedProducts = JSON.parse(products);
+            parsedProducts.forEach(
+                async (e: OrderProductModel) =>
+                    await OrderProduct.create({
+                        orderId: order.id,
+                        productId: e.productId,
+                    }),
+            );
             return res.json(order);
         } catch (error) {
             if (error instanceof Error) {
@@ -44,7 +63,10 @@ class orderController {
     getOneOrder = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const order = await Order.findOne({ where: { id } });
+            const order = await Order.findOne({
+                where: { id },
+                include: [{ model: OrderProduct, as: 'order_products' }],
+            });
             return res.json(order);
         } catch (error) {
             if (error instanceof Error) {
@@ -79,8 +101,14 @@ class orderController {
     deleteOrder = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const order = await Order.findOne({ where: { id } });
+            const order = await Order.findOne({
+                where: { id },
+                include: [{ model: OrderProduct, as: 'order_products' }],
+            });
             if (order) {
+                order.order_products?.forEach(async (el) => {
+                    await el.destroy();
+                });
                 await order.destroy();
                 return res.json({ message: 'Order was deleted' });
             } else {
