@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Address, User } from '../database/models';
+import { Address } from '../database/models';
 import ApiError from '../error/apiError';
 
 class addressController {
