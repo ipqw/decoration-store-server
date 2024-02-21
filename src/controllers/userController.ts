@@ -43,30 +43,43 @@ class userController {
             };
 
             async function upload(req: Request) {
-                const {
-                    email,
-                    password,
-                    firstName,
-                    lastName,
-                    displayName,
-                    role,
-                } = req.body;
+                try {
+                    const {
+                        email,
+                        password,
+                        firstName,
+                        lastName,
+                        displayName,
+                        role,
+                    } = req.body;
 
-                const result: any = await streamUpload(req);
-                const hashPassword = await bcrypt.hash(password, 10);
-                const user = await User.create({
-                    email,
-                    password: hashPassword,
-                    firstName,
-                    lastName,
-                    displayName,
-                    imageUrl: result.url,
-                    role,
-                });
-                const cart = await Cart.create({ userId: user.id });
-                const token = generateJWT(user.id, user.email, user.role);
+                    const hashPassword = await bcrypt.hash(password, 10);
+                    const user = await User.create({
+                        email,
+                        password: hashPassword,
+                        firstName,
+                        lastName,
+                        displayName,
+                        role,
+                    });
+                    const cart = await Cart.create({ userId: user.id });
+                    if (req.files) {
+                        const result: any = await streamUpload(req).catch(
+                            (err) => next(ApiError.internal(err)),
+                        );
+                        user.set({ imageUrl: result.url });
+                        user.save();
+                    }
+                    const token = generateJWT(user.id, user.email, user.role);
 
-                return res.json({ token, userId: user.id });
+                    return res.json({ token, userId: user.id });
+                } catch (error) {
+                    if (error instanceof Error) {
+                        next(ApiError.badRequest(error.message));
+                    } else {
+                        next(ApiError.internal('Something went wrong'));
+                    }
+                }
             }
             upload(req);
         } catch (error) {
@@ -125,29 +138,44 @@ class userController {
             };
 
             async function upload(req: Request) {
-                const { id } = req.params;
-                const { email, password, firstName, lastName, displayName } =
-                    req.body;
-                const user = await User.findOne({
-                    where: { id },
-                });
-                let result: any = user?.imageUrl;
-                if (req.files?.img) {
-                    result = await streamUpload(req);
+                try {
+                    const { id } = req.params;
+                    const {
+                        email,
+                        password,
+                        firstName,
+                        lastName,
+                        displayName,
+                    } = req.body;
+                    const user = await User.findOne({
+                        where: { id },
+                    });
+                    let result: any = user?.imageUrl;
+                    if (req.files?.img) {
+                        result = await streamUpload(req).catch((err) =>
+                            next(ApiError.internal(err)),
+                        );
+                    }
+                    const hashPassword = password
+                        ? await bcrypt.hash(password, 10)
+                        : user?.password;
+                    user?.set({
+                        email: email || user.email,
+                        password: hashPassword,
+                        firstName: firstName || user.firstName,
+                        lastName: lastName || user.lastName,
+                        displayName: displayName || user.displayName,
+                        imageUrl: result.url,
+                    });
+                    await user?.save();
+                    return res.json(user);
+                } catch (error) {
+                    if (error instanceof Error) {
+                        next(ApiError.badRequest(error.message));
+                    } else {
+                        next(ApiError.internal('Something went wrong'));
+                    }
                 }
-                const hashPassword = password
-                    ? await bcrypt.hash(password, 10)
-                    : user?.password;
-                user?.set({
-                    email: email || user.email,
-                    password: hashPassword,
-                    firstName: firstName || user.firstName,
-                    lastName: lastName || user.lastName,
-                    displayName: displayName || user.displayName,
-                    imageUrl: result.url,
-                });
-                await user?.save();
-                return res.json(user);
             }
             upload(req);
         } catch (error) {
