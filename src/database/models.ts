@@ -152,6 +152,21 @@ Product.hasMany(Rating, {
 });
 Rating.belongsTo(Product);
 
+Product.hasMany(WishlistProduct, {
+    foreignKey: 'productId',
+});
+WishlistProduct.belongsTo(Product);
+
+Product.hasMany(CartProduct, {
+    foreignKey: 'productId',
+});
+CartProduct.belongsTo(Product);
+
+Product.hasMany(OrderProduct, {
+    foreignKey: 'productId',
+});
+OrderProduct.belongsTo(Product);
+
 // Type
 Type.hasMany(Product, {
     foreignKey: 'typeId',

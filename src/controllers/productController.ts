@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { Cart, User } from '../database/models';
-import { v2 as cloudinary } from 'cloudinary';
-import jwt from 'jsonwebtoken';
-import streamifier from 'streamifier';
-import bcrypt from 'bcryptjs';
+import { Discount, Product, Rating } from '../database/models';
 import ApiError from '../error/apiError';
+import streamifier from 'streamifier';
+import { v2 as cloudinary } from 'cloudinary';
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -13,14 +11,8 @@ cloudinary.config({
     secure: true,
 });
 
-const generateJWT = (id: number, email: string, role: string) => {
-    return jwt.sign({ id, email, role }, process.env.SECRET_KEY || '', {
-        expiresIn: '12h',
-    });
-};
-
-class userController {
-    createUser = async (req: Request, res: Response, next: NextFunction) => {
+class productController {
+    createProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const streamUpload = (req: Request) => {
                 const img = req.files?.img || { data: '' };
@@ -44,35 +36,22 @@ class userController {
 
             async function upload(req: Request) {
                 try {
-                    const {
-                        email,
-                        password,
-                        firstName,
-                        lastName,
-                        displayName,
-                        role,
-                    } = req.body;
+                    const { name, price } = req.body;
 
-                    const hashPassword = await bcrypt.hash(password, 10);
-                    const user = await User.create({
-                        email,
-                        password: hashPassword,
-                        firstName,
-                        lastName,
-                        displayName,
-                        role,
+                    const product = await Product.create({
+                        name,
+                        price,
+                        averageRate: 0,
                     });
-                    const cart = await Cart.create({ userId: user.id });
                     if (req.files) {
                         const result: any = await streamUpload(req).catch(
                             (err) => next(ApiError.internal(err)),
                         );
-                        user.set({ imageUrl: result.url });
-                        await user.save();
+                        product.set({ imageUrl: result.url });
+                        await product.save();
                     }
-                    const token = generateJWT(user.id, user.email, user.role);
 
-                    return res.json({ token, userId: user.id });
+                    return res.json(product);
                 } catch (error) {
                     if (error instanceof Error) {
                         next(ApiError.badRequest(error.message));
@@ -90,10 +69,14 @@ class userController {
             }
         }
     };
-    getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+    getAllProducts = async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
         try {
-            const users = await User.findAll();
-            return res.json(users);
+            const products = await Product.findAll();
+            return res.json(products);
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
@@ -102,11 +85,17 @@ class userController {
             }
         }
     };
-    getOneUser = async (req: Request, res: Response, next: NextFunction) => {
+    getOneProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const user = await User.findOne({ where: { id } });
-            return res.json(user);
+            const product = await Product.findOne({
+                where: { id },
+                include: [
+                    { model: Discount, as: 'discounts' },
+                    { model: Rating, as: 'ratings' },
+                ],
+            });
+            return res.json(product);
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
@@ -115,7 +104,7 @@ class userController {
             }
         }
     };
-    updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    updateProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const streamUpload = (req: Request) => {
                 const img = req.files?.img || { data: '' };
@@ -140,35 +129,22 @@ class userController {
             async function upload(req: Request) {
                 try {
                     const { id } = req.params;
-                    const {
-                        email,
-                        password,
-                        firstName,
-                        lastName,
-                        displayName,
-                    } = req.body;
-                    const user = await User.findOne({
+                    const { name, price } = req.body;
+
+                    const product = await Product.findOne({
                         where: { id },
                     });
-                    let result: any = user?.imageUrl;
-                    if (req.files?.img) {
-                        result = await streamUpload(req).catch((err) =>
-                            next(ApiError.internal(err)),
+                    product?.set({ name, price });
+                    await product?.save();
+                    if (req.files) {
+                        const result: any = await streamUpload(req).catch(
+                            (err) => next(ApiError.internal(err)),
                         );
+                        product?.set({ imageUrl: result.url });
+                        product?.save();
                     }
-                    const hashPassword = password
-                        ? await bcrypt.hash(password, 10)
-                        : user?.password;
-                    user?.set({
-                        email: email || user.email,
-                        password: hashPassword,
-                        firstName: firstName || user.firstName,
-                        lastName: lastName || user.lastName,
-                        displayName: displayName || user.displayName,
-                        imageUrl: result.url,
-                    });
-                    await user?.save();
-                    return res.json(user);
+
+                    return res.json(product);
                 } catch (error) {
                     if (error instanceof Error) {
                         next(ApiError.badRequest(error.message));
@@ -186,16 +162,15 @@ class userController {
             }
         }
     };
-    deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+    deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const user = await User.findOne({ where: { id } });
-
-            if (user) {
-                await user.destroy();
-                return res.json({ message: 'User was deleted' });
+            const product = await Product.findOne({ where: { id } });
+            if (product) {
+                await product?.destroy();
+                return res.json({ message: 'Product was deleted' });
             } else {
-                next(ApiError.badRequest('User was not found'));
+                next(ApiError.badRequest('Product was not found'));
             }
         } catch (error) {
             if (error instanceof Error) {
@@ -206,4 +181,4 @@ class userController {
         }
     };
 }
-export default new userController();
+export default new productController();
