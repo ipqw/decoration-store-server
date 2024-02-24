@@ -19,6 +19,12 @@ export interface UserModel
     displayName: string | null;
     imageUrl: string | null;
     role: string;
+    cart?: CartModel;
+    wishlist?: WishlistModel;
+    ratings?: RatingModel[];
+    likes?: LikeModel[];
+    addresses?: AddressModel[];
+    orders?: OrderModel[];
 }
 
 export interface AddressModel
@@ -36,6 +42,7 @@ export interface AddressModel
     street: string;
     houseNumber: number;
     userId?: ForeignKey<UserModel['id']>;
+    orders?: OrderModel[];
 }
 
 export interface OrderModel
@@ -47,7 +54,7 @@ export interface OrderModel
     status: string;
     price: number;
     paymentMethod: string;
-    addressId?: ForeignKey<OrderModel['id']>;
+    addressId?: ForeignKey<AddressModel['id']>;
     userId?: ForeignKey<UserModel['id']>;
     order_products?: OrderProductModel[];
 }
@@ -68,6 +75,7 @@ export interface CartModel
     > {
     id: CreationOptional<number>;
     userId?: ForeignKey<UserModel['id']>;
+    cart_products?: CartProductModel[];
 }
 
 export interface CartProductModel
@@ -86,6 +94,7 @@ export interface WishlistModel
     > {
     id: CreationOptional<number>;
     userId?: ForeignKey<UserModel['id']>;
+    wishlist_products?: WishlistProductModel[];
 }
 export interface WishlistProductModel
     extends Model<
@@ -107,6 +116,12 @@ export interface ProductModel
     averageRate: number;
     price: number;
     discountPrice: number | null;
+    typeId?: ForeignKey<TypeModel['id']>;
+    discounts?: DiscountModel[];
+    ratings?: RatingModel[];
+    cart_products?: CartProductModel[];
+    wishlist_products?: WishlistProductModel[];
+    order_products?: OrderProductModel[];
 }
 export interface DiscountModel
     extends Model<

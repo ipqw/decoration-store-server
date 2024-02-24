@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Address } from '../database/models';
+import { Address, Order } from '../database/models';
 import ApiError from '../error/apiError';
 
 class addressController {
@@ -60,6 +60,7 @@ class addressController {
             const { id } = req.params;
             const address = await Address.findOne({
                 where: { id: Number(id) },
+                include: [{ model: Order, as: 'orders' }],
             });
             return res.json(address);
         } catch (error) {

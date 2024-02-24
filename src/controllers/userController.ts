@@ -1,5 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
-import { Cart, User } from '../database/models';
+import {
+    Address,
+    Cart,
+    CartProduct,
+    Like,
+    Order,
+    Rating,
+    User,
+    Wishlist,
+    WishlistProduct,
+} from '../database/models';
 import { v2 as cloudinary } from 'cloudinary';
 import jwt from 'jsonwebtoken';
 import streamifier from 'streamifier';
@@ -62,7 +72,8 @@ class userController {
                         displayName,
                         role,
                     });
-                    const cart = await Cart.create({ userId: user.id });
+                    await Cart.create({ userId: user.id });
+                    await Wishlist.create({ userId: user.id });
                     if (req.files) {
                         const result: any = await streamUpload(req).catch(
                             (err) => next(ApiError.internal(err)),
@@ -105,7 +116,27 @@ class userController {
     getOneUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const user = await User.findOne({ where: { id } });
+            const user = await User.findOne({
+                where: { id },
+                include: [
+                    {
+                        model: Cart,
+                        as: 'cart',
+                        include: [{ model: CartProduct, as: 'cart_products' }],
+                    },
+                    {
+                        model: Wishlist,
+                        as: 'wishlist',
+                        include: [
+                            { model: WishlistProduct, as: 'wishlist_products' },
+                        ],
+                    },
+                    { model: Rating, as: 'ratings' },
+                    { model: Like, as: 'likes' },
+                    { model: Address, as: 'addresses' },
+                    { model: Order, as: 'orders' },
+                ],
+            });
             return res.json(user);
         } catch (error) {
             if (error instanceof Error) {
@@ -189,9 +220,61 @@ class userController {
     deleteUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const user = await User.findOne({ where: { id } });
+            const user = await User.findOne({
+                where: { id },
+                include: [
+                    {
+                        model: Cart,
+                        as: 'cart',
+                        include: [{ model: CartProduct, as: 'cart_products' }],
+                    },
+                    {
+                        model: Wishlist,
+                        as: 'wishlist',
+                        include: [
+                            { model: WishlistProduct, as: 'wishlist_products' },
+                        ],
+                    },
+                    { model: Rating, as: 'ratings' },
+                    { model: Like, as: 'likes' },
+                    { model: Address, as: 'addresses' },
+                    { model: Order, as: 'orders' },
+                ],
+            });
 
             if (user) {
+                // cart
+                user.cart?.cart_products?.forEach(async (el) => {
+                    await el.destroy();
+                });
+                await user.cart?.destroy();
+
+                // wishlist
+                user.wishlist?.wishlist_products?.forEach(async (el) => {
+                    await el.destroy();
+                });
+                await user.wishlist?.destroy();
+
+                // ratings
+                user.ratings?.forEach(async (el) => {
+                    await el.destroy();
+                });
+
+                // likes
+                user.likes?.forEach(async (el) => {
+                    await el.destroy();
+                });
+
+                // addresses
+                user.addresses?.forEach(async (el) => {
+                    await el.destroy();
+                });
+
+                // orders
+                user.orders?.forEach(async (el) => {
+                    await el.destroy();
+                });
+
                 await user.destroy();
                 return res.json({ message: 'User was deleted' });
             } else {
