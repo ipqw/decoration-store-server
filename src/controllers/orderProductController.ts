@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { OrderProduct } from '../database/models';
+import { OrderProduct, Product } from '../database/models';
 import ApiError from '../error/apiError';
 
 class orderProductController {
@@ -48,7 +48,10 @@ class orderProductController {
     ) => {
         try {
             const { id } = req.params;
-            const orderProduct = await OrderProduct.findOne({ where: { id } });
+            const orderProduct = await OrderProduct.findOne({
+                where: { id },
+                include: [{ model: Product, as: 'product' }],
+            });
             return res.json(orderProduct);
         } catch (error) {
             if (error instanceof Error) {
