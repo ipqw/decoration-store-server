@@ -41,7 +41,7 @@ export interface AddressModel
     zipcode: string | null;
     street: string;
     houseNumber: number;
-    userId?: ForeignKey<UserModel['id']>;
+    userId: ForeignKey<UserModel['id']>;
     orders?: OrderModel[];
 }
 
@@ -54,8 +54,8 @@ export interface OrderModel
     status: string;
     price: number;
     paymentMethod: string;
-    addressId?: ForeignKey<AddressModel['id']>;
-    userId?: ForeignKey<UserModel['id']>;
+    addressId: ForeignKey<AddressModel['id']>;
+    userId: ForeignKey<UserModel['id']>;
     order_products?: OrderProductModel[];
 }
 export interface OrderProductModel
@@ -64,7 +64,7 @@ export interface OrderProductModel
         InferCreationAttributes<OrderProductModel>
     > {
     id: CreationOptional<number>;
-    orderId?: ForeignKey<OrderModel['id']>;
+    orderId: ForeignKey<OrderModel['id']>;
     productId: ForeignKey<ProductModel['id']>;
 }
 
@@ -74,7 +74,7 @@ export interface CartModel
         InferCreationAttributes<CartModel>
     > {
     id: CreationOptional<number>;
-    userId?: ForeignKey<UserModel['id']>;
+    userId: ForeignKey<UserModel['id']>;
     cart_products?: CartProductModel[];
 }
 
@@ -85,7 +85,7 @@ export interface CartProductModel
     > {
     id: CreationOptional<number>;
     productId: number;
-    cartId?: ForeignKey<CartModel['id']>;
+    cartId: ForeignKey<CartModel['id']>;
 }
 export interface WishlistModel
     extends Model<
@@ -93,7 +93,7 @@ export interface WishlistModel
         InferCreationAttributes<WishlistModel>
     > {
     id: CreationOptional<number>;
-    userId?: ForeignKey<UserModel['id']>;
+    userId: ForeignKey<UserModel['id']>;
     wishlist_products?: WishlistProductModel[];
 }
 export interface WishlistProductModel
@@ -103,7 +103,7 @@ export interface WishlistProductModel
     > {
     id: CreationOptional<number>;
     productId: number;
-    wishlistId?: ForeignKey<WishlistModel['id']>;
+    wishlistId: ForeignKey<WishlistModel['id']>;
 }
 export interface ProductModel
     extends Model<
@@ -116,7 +116,7 @@ export interface ProductModel
     averageRate: number;
     price: number;
     discountPrice: number | null;
-    typeId?: ForeignKey<TypeModel['id']>;
+    typeId: ForeignKey<TypeModel['id']>;
     discounts?: DiscountModel[];
     ratings?: RatingModel[];
     cart_products?: CartProductModel[];
@@ -131,7 +131,7 @@ export interface DiscountModel
     id: CreationOptional<number>;
     percent: number;
     expiresIn: number;
-    productId?: ForeignKey<ProductModel['id']>;
+    productId: ForeignKey<ProductModel['id']>;
 }
 export interface TypeModel
     extends Model<
@@ -149,9 +149,8 @@ export interface RatingModel
     id: CreationOptional<number>;
     rate: number;
     text: string;
-    userId?: ForeignKey<UserModel['id']>;
-    productId?: ForeignKey<ProductModel['id']>;
-    typeId?: ForeignKey<TypeModel['id']>;
+    userId: ForeignKey<UserModel['id']>;
+    productId: ForeignKey<ProductModel['id']>;
 }
 export interface LikeModel
     extends Model<
@@ -159,5 +158,5 @@ export interface LikeModel
         InferCreationAttributes<LikeModel>
     > {
     id: CreationOptional<number>;
-    userId?: ForeignKey<UserModel['id']>;
+    userId: ForeignKey<UserModel['id']>;
 }

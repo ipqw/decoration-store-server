@@ -36,11 +36,11 @@ class productController {
 
             async function upload(req: Request) {
                 try {
-                    const { name, price } = req.body;
-
+                    const { name, price, typeId } = req.body;
                     const product = await Product.create({
                         name,
                         price,
+                        typeId,
                         averageRate: 0,
                     });
                     if (req.files) {
@@ -50,7 +50,6 @@ class productController {
                         product.set({ imageUrl: result.url });
                         await product.save();
                     }
-
                     return res.json(product);
                 } catch (error) {
                     if (error instanceof Error) {

@@ -37,6 +37,7 @@ export const Address = sequelize.define<AddressModel>('address', {
     zipcode: { type: DataTypes.INTEGER, allowNull: true },
     street: { type: DataTypes.STRING, allowNull: false },
     houseNumber: { type: DataTypes.INTEGER, allowNull: false },
+    userId: { type: DataTypes.INTEGER, allowNull: false },
 });
 
 export const Order = sequelize.define<OrderModel>('order', {
@@ -44,31 +45,38 @@ export const Order = sequelize.define<OrderModel>('order', {
     status: { type: DataTypes.STRING, allowNull: false },
     price: { type: DataTypes.FLOAT, allowNull: false },
     paymentMethod: { type: DataTypes.STRING, allowNull: false },
+    userId: { type: DataTypes.INTEGER, allowNull: false },
+    addressId: { type: DataTypes.INTEGER, allowNull: false },
 });
 export const OrderProduct = sequelize.define<OrderProductModel>(
     'order_product',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         productId: { type: DataTypes.INTEGER, allowNull: false },
+        orderId: { type: DataTypes.INTEGER, allowNull: false },
     },
 );
 
 export const Cart = sequelize.define<CartModel>('cart', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    userId: { type: DataTypes.INTEGER, allowNull: false },
 });
 export const CartProduct = sequelize.define<CartProductModel>('cart_product', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     productId: { type: DataTypes.INTEGER, allowNull: false },
+    cartId: { type: DataTypes.INTEGER, allowNull: false },
 });
 
 export const Wishlist = sequelize.define<WishlistModel>('wishlist', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    userId: { type: DataTypes.INTEGER, allowNull: false },
 });
 export const WishlistProduct = sequelize.define<WishlistProductModel>(
     'wishlist_product',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         productId: { type: DataTypes.INTEGER, allowNull: false },
+        wishlistId: { type: DataTypes.INTEGER, allowNull: false },
     },
 );
 
@@ -79,11 +87,13 @@ export const Product = sequelize.define<ProductModel>('product', {
     averageRate: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
     price: { type: DataTypes.FLOAT, allowNull: false },
     discountPrice: { type: DataTypes.FLOAT, allowNull: true },
+    typeId: { type: DataTypes.INTEGER, allowNull: false },
 });
 export const Discount = sequelize.define<DiscountModel>('discount', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     percent: { type: DataTypes.INTEGER, unique: false, allowNull: false },
     expiresIn: { type: DataTypes.INTEGER, unique: false, allowNull: false },
+    productId: { type: DataTypes.INTEGER, allowNull: false },
 });
 export const Type = sequelize.define<TypeModel>('type', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -93,9 +103,12 @@ export const Rating = sequelize.define<RatingModel>('rating', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     rate: { type: DataTypes.INTEGER, allowNull: false },
     text: { type: DataTypes.STRING, allowNull: false },
+    userId: { type: DataTypes.INTEGER, allowNull: false },
+    productId: { type: DataTypes.INTEGER, allowNull: false },
 });
 export const Like = sequelize.define<LikeModel>('like', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    userId: { type: DataTypes.INTEGER, allowNull: false },
 });
 
 // User
