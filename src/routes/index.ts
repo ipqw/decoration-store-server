@@ -8,6 +8,7 @@ import { cartRouter } from './cartRouter';
 import { cartProductRouter } from './cartProductRouter';
 import { typeRouter } from './typeRouter';
 import { wishlistRouter } from './wishlistRouter';
+import { wishlistProductRouter } from './wishlistProductRouter';
 
 export const router = express();
 
@@ -20,3 +21,4 @@ router.use('/cart', cartRouter);
 router.use('/cartproduct', cartProductRouter);
 router.use('/type', typeRouter);
 router.use('/wishlist', wishlistRouter);
+router.use('/wishlistproduct', wishlistProductRouter);
