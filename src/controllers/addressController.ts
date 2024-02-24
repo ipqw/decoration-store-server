@@ -16,9 +16,6 @@ class addressController {
                 houseNumber,
                 userId,
             } = req.body;
-            if (!userId) {
-                next(ApiError.badRequest('userId is required'));
-            }
             const address = await Address.create({
                 name,
                 recipientName,

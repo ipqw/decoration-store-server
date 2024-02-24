@@ -14,15 +14,6 @@ class orderController {
                 userId,
                 products,
             } = req.body;
-            if (!products) {
-                next(ApiError.badRequest('products are required'));
-            }
-            if (!addressId) {
-                next(ApiError.badRequest('addressId is required'));
-            }
-            if (!userId) {
-                next(ApiError.badRequest('userId is required'));
-            }
             const order = await Order.create({
                 status,
                 price,
@@ -32,13 +23,24 @@ class orderController {
             });
 
             const parsedProducts = JSON.parse(products);
-            parsedProducts.forEach(
-                async (e: OrderProductModel) =>
+            await parsedProducts.forEach(async (e: OrderProductModel) => {
+                try {
                     await OrderProduct.create({
                         orderId: order.id,
                         productId: e.productId,
-                    }),
-            );
+                    });
+                } catch (error) {
+                    order.order_products?.forEach(async (el) => {
+                        await el.destroy();
+                    });
+                    await order.destroy();
+                    if (error instanceof Error) {
+                        next(ApiError.badRequest(error.message));
+                    } else {
+                        next(ApiError.internal('Something went wrong'));
+                    }
+                }
+            });
             return res.json(order);
         } catch (error) {
             if (error instanceof Error) {
