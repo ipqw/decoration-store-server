@@ -11,6 +11,7 @@ import { wishlistRouter } from './wishlistRouter';
 import { wishlistProductRouter } from './wishlistProductRouter';
 import { discountRouter } from './discountRouter';
 import { reviewRouter } from './reviewRouter';
+import { likeRouter } from './likeRouter';
 
 export const router = express();
 
@@ -26,3 +27,4 @@ router.use('/wishlist', wishlistRouter);
 router.use('/wishlistproduct', wishlistProductRouter);
 router.use('/discount', discountRouter);
 router.use('/review', reviewRouter);
+router.use('/like', likeRouter);
