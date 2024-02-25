@@ -53,7 +53,6 @@ class productController {
                                     file,
                                 ).catch((err) => next(ApiError.internal(err)));
                                 images.push(result.url);
-                                console.log(result.url);
                             }
                         } else {
                             const result: any = await streamUpload(img).catch(
@@ -191,7 +190,6 @@ class productController {
                                     file,
                                 ).catch((err) => next(ApiError.internal(err)));
                                 images.push(result.url);
-                                console.log(result.url);
                             }
                         } else {
                             const result: any = await streamUpload(img).catch(
