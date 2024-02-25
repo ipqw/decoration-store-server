@@ -83,7 +83,11 @@ export const WishlistProduct = sequelize.define<WishlistProductModel>(
 export const Product = sequelize.define<ProductModel>('product', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, unique: false, allowNull: false },
-    imageUrl: { type: DataTypes.STRING, unique: false, allowNull: true },
+    images: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        unique: false,
+        allowNull: true,
+    },
     averageRate: {
         type: DataTypes.FLOAT,
         allowNull: false,

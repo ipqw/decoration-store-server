@@ -10,6 +10,7 @@ import {
 import ApiError from '../error/apiError';
 import streamifier from 'streamifier';
 import { v2 as cloudinary } from 'cloudinary';
+import { FileArray, UploadedFile } from 'express-fileupload';
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -18,29 +19,22 @@ cloudinary.config({
     secure: true,
 });
 
+const streamUpload = async (img: UploadedFile) => {
+    return new Promise((resolve, reject) => {
+        let stream = cloudinary.uploader.upload_stream((error, result) => {
+            if (result) {
+                resolve(result);
+            } else {
+                reject(error);
+            }
+        });
+        streamifier.createReadStream(img?.data).pipe(stream);
+    });
+};
+
 class productController {
     createProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const streamUpload = (req: Request) => {
-                const img = req.files?.img || { data: '' };
-                return new Promise((resolve, reject) => {
-                    let stream = cloudinary.uploader.upload_stream(
-                        (error, result) => {
-                            if (result) {
-                                resolve(result);
-                            } else {
-                                reject(error);
-                            }
-                        },
-                    );
-                    streamifier
-                        .createReadStream(
-                            Array.isArray(img) ? img[0]?.data : img?.data,
-                        )
-                        .pipe(stream);
-                });
-            };
-
             async function upload(req: Request) {
                 try {
                     const { name, price, typeId } = req.body;
@@ -51,11 +45,23 @@ class productController {
                         averageRate: 0,
                     });
                     if (req.files) {
-                        const result: any = await streamUpload(req).catch(
-                            (err) => next(ApiError.internal(err)),
-                        );
-                        product.set({ imageUrl: result.url });
-                        await product.save();
+                        const img = req.files?.img;
+                        const images: string[] = [];
+                        if (Array.isArray(img)) {
+                            for (const file of img) {
+                                const result: any = await streamUpload(
+                                    file,
+                                ).catch((err) => next(ApiError.internal(err)));
+                                images.push(result.url);
+                                console.log(result.url);
+                            }
+                        } else {
+                            const result: any = await streamUpload(img).catch(
+                                (err) => next(ApiError.internal(err)),
+                            );
+                            images.push(result.url);
+                        }
+                        product?.set({ images });
                     }
                     return res.json(product);
                 } catch (error) {
@@ -168,26 +174,6 @@ class productController {
     };
     updateProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const streamUpload = (req: Request) => {
-                const img = req.files?.img || { data: '' };
-                return new Promise((resolve, reject) => {
-                    let stream = cloudinary.uploader.upload_stream(
-                        (error, result) => {
-                            if (result) {
-                                resolve(result);
-                            } else {
-                                reject(error);
-                            }
-                        },
-                    );
-                    streamifier
-                        .createReadStream(
-                            Array.isArray(img) ? img[0]?.data : img?.data,
-                        )
-                        .pipe(stream);
-                });
-            };
-
             async function upload(req: Request) {
                 try {
                     const { id } = req.params;
@@ -196,16 +182,30 @@ class productController {
                     const product = await Product.findOne({
                         where: { id },
                     });
-                    product?.set({ name, price });
-                    await product?.save();
                     if (req.files) {
-                        const result: any = await streamUpload(req).catch(
-                            (err) => next(ApiError.internal(err)),
-                        );
-                        product?.set({ imageUrl: result.url });
-                        product?.save();
+                        const img = req.files?.img;
+                        const images: string[] = [];
+                        if (Array.isArray(img)) {
+                            for (const file of img) {
+                                const result: any = await streamUpload(
+                                    file,
+                                ).catch((err) => next(ApiError.internal(err)));
+                                images.push(result.url);
+                                console.log(result.url);
+                            }
+                        } else {
+                            const result: any = await streamUpload(img).catch(
+                                (err) => next(ApiError.internal(err)),
+                            );
+                            images.push(result.url);
+                        }
+                        product?.set({ images });
                     }
-
+                    product?.set({
+                        name: name || product.name,
+                        price: price || product.price,
+                    });
+                    await product?.save();
                     return res.json(product);
                 } catch (error) {
                     if (error instanceof Error) {

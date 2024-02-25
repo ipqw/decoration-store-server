@@ -112,7 +112,7 @@ export interface ProductModel
     > {
     id: CreationOptional<number>;
     name: string;
-    imageUrl: string | null;
+    images: string[] | null;
     averageRate: number;
     price: number;
     discountPrice: number | null;

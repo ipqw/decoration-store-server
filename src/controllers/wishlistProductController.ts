@@ -10,6 +10,16 @@ class cartWishlistController {
     ) => {
         try {
             const { productId, wishlistId } = req.body;
+            const existedWishlistProduct = await WishlistProduct.findOne({
+                where: { wishlistId, productId },
+            });
+            if (existedWishlistProduct) {
+                next(
+                    ApiError.badRequest(
+                        'Product already added to the wishlist',
+                    ),
+                );
+            }
             const wishlistProduct = await WishlistProduct.create({
                 productId,
                 wishlistId,

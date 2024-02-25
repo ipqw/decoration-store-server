@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import ApiError from '../error/apiError';
 import { CartProduct, Product } from '../database/models';
+import { CartProductModel } from '../types/sequelizeTypes';
 
 class cartProductController {
     createCartProduct = async (
@@ -9,9 +10,24 @@ class cartProductController {
         next: NextFunction,
     ) => {
         try {
-            const { productId, cartId } = req.body;
-            const cartProduct = await CartProduct.create({ productId, cartId });
-            return res.json(cartProduct);
+            const { productId, cartId, amount } = req.body;
+            if (amount) {
+                const cartProducts: CartProductModel[] = [];
+                for (let i = 0; i < amount; i++) {
+                    const cartProduct = await CartProduct.create({
+                        productId,
+                        cartId,
+                    });
+                    cartProducts.push(cartProduct);
+                }
+                return res.json(cartProducts);
+            } else {
+                const cartProduct = await CartProduct.create({
+                    productId,
+                    cartId,
+                });
+                return res.json(cartProduct);
+            }
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
