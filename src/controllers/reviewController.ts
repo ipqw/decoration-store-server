@@ -1,18 +1,18 @@
 import { NextFunction, Request, Response } from 'express';
 import ApiError from '../error/apiError';
-import { Rating } from '../database/models';
+import { Review } from '../database/models';
 
-class ratingController {
-    createRating = async (req: Request, res: Response, next: NextFunction) => {
+class reviewController {
+    createReview = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { rate, text, userId, productId } = req.body;
-            const rating = await Rating.create({
+            const review = await Review.create({
                 rate,
                 text,
                 userId,
                 productId,
             });
-            return res.json(rating);
+            return res.json(review);
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
@@ -21,9 +21,9 @@ class ratingController {
             }
         }
     };
-    getAllRatings = async (req: Request, res: Response, next: NextFunction) => {
+    getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const ratings = await Rating.findAll();
+            const ratings = await Review.findAll();
             return res.json(ratings);
         } catch (error) {
             if (error instanceof Error) {
@@ -33,13 +33,13 @@ class ratingController {
             }
         }
     };
-    getOneRating = async (req: Request, res: Response, next: NextFunction) => {
+    getOneReview = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const rating = await Rating.findOne({
+            const review = await Review.findOne({
                 where: { id },
             });
-            return res.json(rating);
+            return res.json(review);
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
@@ -48,19 +48,19 @@ class ratingController {
             }
         }
     };
-    updateRating = async (req: Request, res: Response, next: NextFunction) => {
+    updateReview = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
             const { rate, text } = req.body;
-            const rating = await Rating.findOne({
+            const review = await Review.findOne({
                 where: { id },
             });
-            rating?.set({
+            review?.set({
                 rate,
                 text,
             });
-            await rating?.save();
-            return res.json(rating);
+            await review?.save();
+            return res.json(review);
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
@@ -69,15 +69,15 @@ class ratingController {
             }
         }
     };
-    deleteRating = async (req: Request, res: Response, next: NextFunction) => {
+    deleteReview = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const rating = await Rating.findOne({ where: { id } });
-            if (rating) {
-                await rating.destroy();
-                return res.json({ message: 'Rating was deleted' });
+            const review = await Review.findOne({ where: { id } });
+            if (review) {
+                await review.destroy();
+                return res.json({ message: 'Review was deleted' });
             } else {
-                next(ApiError.badRequest('Rating was not found'));
+                next(ApiError.badRequest('Review was not found'));
             }
         } catch (error) {
             if (error instanceof Error) {
@@ -88,4 +88,4 @@ class ratingController {
         }
     };
 }
-export default new ratingController();
+export default new reviewController();

@@ -10,7 +10,7 @@ import { typeRouter } from './typeRouter';
 import { wishlistRouter } from './wishlistRouter';
 import { wishlistProductRouter } from './wishlistProductRouter';
 import { discountRouter } from './discountRouter';
-import { ratingRouter } from './ratingRouter';
+import { reviewRouter } from './reviewRouter';
 
 export const router = express();
 
@@ -25,4 +25,4 @@ router.use('/type', typeRouter);
 router.use('/wishlist', wishlistRouter);
 router.use('/wishlistproduct', wishlistProductRouter);
 router.use('/discount', discountRouter);
-router.use('/rating', ratingRouter);
+router.use('/review', reviewRouter);

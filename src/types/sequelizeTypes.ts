@@ -21,7 +21,7 @@ export interface UserModel
     role: string;
     cart?: CartModel;
     wishlist?: WishlistModel;
-    ratings?: RatingModel[];
+    reviews?: ReviewModel[];
     likes?: LikeModel[];
     addresses?: AddressModel[];
     orders?: OrderModel[];
@@ -118,7 +118,7 @@ export interface ProductModel
     discountPrice: number | null;
     typeId: ForeignKey<TypeModel['id']>;
     discount?: DiscountModel;
-    ratings?: RatingModel[];
+    reviews?: ReviewModel[];
     cart_products?: CartProductModel[];
     wishlist_products?: WishlistProductModel[];
     order_products?: OrderProductModel[];
@@ -142,10 +142,10 @@ export interface TypeModel
     id: CreationOptional<number>;
     name: string;
 }
-export interface RatingModel
+export interface ReviewModel
     extends Model<
-        InferAttributes<RatingModel>,
-        InferCreationAttributes<RatingModel>
+        InferAttributes<ReviewModel>,
+        InferCreationAttributes<ReviewModel>
     > {
     id: CreationOptional<number>;
     rate: number;
@@ -160,4 +160,5 @@ export interface LikeModel
     > {
     id: CreationOptional<number>;
     userId: ForeignKey<UserModel['id']>;
+    reviewId: ForeignKey<ReviewModel['id']>;
 }

@@ -9,7 +9,7 @@ import {
     OrderModel,
     OrderProductModel,
     ProductModel,
-    RatingModel,
+    ReviewModel,
     TypeModel,
     UserModel,
     WishlistModel,
@@ -104,7 +104,7 @@ export const Type = sequelize.define<TypeModel>('type', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
-export const Rating = sequelize.define<RatingModel>('rating', {
+export const Review = sequelize.define<ReviewModel>('review', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     rate: { type: DataTypes.INTEGER, allowNull: false },
     text: { type: DataTypes.STRING, allowNull: false },
@@ -114,6 +114,7 @@ export const Rating = sequelize.define<RatingModel>('rating', {
 export const Like = sequelize.define<LikeModel>('like', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     userId: { type: DataTypes.INTEGER, allowNull: false },
+    reviewId: { type: DataTypes.INTEGER, allowNull: false },
 });
 
 // User
@@ -127,10 +128,10 @@ User.hasOne(Wishlist, {
 });
 Wishlist.belongsTo(User);
 
-User.hasMany(Rating, {
+User.hasMany(Review, {
     foreignKey: 'userId',
 });
-Rating.belongsTo(User);
+Review.belongsTo(User);
 
 User.hasMany(Like, {
     foreignKey: 'userId',
@@ -165,10 +166,10 @@ Product.hasOne(Discount, {
 });
 Discount.belongsTo(Product);
 
-Product.hasMany(Rating, {
+Product.hasMany(Review, {
     foreignKey: 'productId',
 });
-Rating.belongsTo(Product);
+Review.belongsTo(Product);
 
 Product.hasMany(WishlistProduct, {
     foreignKey: 'productId',
