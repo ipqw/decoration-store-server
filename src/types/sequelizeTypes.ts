@@ -117,7 +117,7 @@ export interface ProductModel
     price: number;
     discountPrice: number | null;
     typeId: ForeignKey<TypeModel['id']>;
-    discounts?: DiscountModel[];
+    discount?: DiscountModel;
     ratings?: RatingModel[];
     cart_products?: CartProductModel[];
     wishlist_products?: WishlistProductModel[];
@@ -130,6 +130,7 @@ export interface DiscountModel
     > {
     id: CreationOptional<number>;
     percent: number;
+    startsIn: number;
     expiresIn: number;
     productId: ForeignKey<ProductModel['id']>;
 }

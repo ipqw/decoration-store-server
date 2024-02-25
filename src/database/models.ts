@@ -84,7 +84,11 @@ export const Product = sequelize.define<ProductModel>('product', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, unique: false, allowNull: false },
     imageUrl: { type: DataTypes.STRING, unique: false, allowNull: true },
-    averageRate: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
+    averageRate: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: 0,
+    },
     price: { type: DataTypes.FLOAT, allowNull: false },
     discountPrice: { type: DataTypes.FLOAT, allowNull: true },
     typeId: { type: DataTypes.INTEGER, allowNull: false },
@@ -92,7 +96,8 @@ export const Product = sequelize.define<ProductModel>('product', {
 export const Discount = sequelize.define<DiscountModel>('discount', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     percent: { type: DataTypes.INTEGER, unique: false, allowNull: false },
-    expiresIn: { type: DataTypes.INTEGER, unique: false, allowNull: false },
+    startsIn: { type: DataTypes.BIGINT, allowNull: false },
+    expiresIn: { type: DataTypes.BIGINT, unique: false, allowNull: false },
     productId: { type: DataTypes.INTEGER, allowNull: false },
 });
 export const Type = sequelize.define<TypeModel>('type', {
@@ -155,7 +160,7 @@ Wishlist.hasMany(WishlistProduct, {
 WishlistProduct.belongsTo(Wishlist);
 
 // Product
-Product.hasMany(Discount, {
+Product.hasOne(Discount, {
     foreignKey: 'productId',
 });
 Discount.belongsTo(Product);

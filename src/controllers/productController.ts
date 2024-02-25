@@ -1,5 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import { Discount, Product, Rating } from '../database/models';
+import {
+    CartProduct,
+    Discount,
+    OrderProduct,
+    Product,
+    Rating,
+    WishlistProduct,
+} from '../database/models';
 import ApiError from '../error/apiError';
 import streamifier from 'streamifier';
 import { v2 as cloudinary } from 'cloudinary';
@@ -74,7 +81,37 @@ class productController {
         next: NextFunction,
     ) => {
         try {
-            const products = await Product.findAll();
+            const { limit } = req.params;
+            const products = await Product.findAll({
+                limit: Number(limit) || 40,
+                include: [{ model: Discount, as: 'discount' }],
+            });
+            products.forEach(async (product) => {
+                if (
+                    product.discount &&
+                    product.discount.startsIn <= Date.now() &&
+                    product.discount.expiresIn > Date.now()
+                ) {
+                    product?.set({
+                        discountPrice: Math.ceil(
+                            product.price -
+                                (product.price / 100) *
+                                    product.discount.percent,
+                        ),
+                    });
+                    await product?.save();
+                }
+                if (
+                    product.discount?.expiresIn &&
+                    Date.now() > product.discount?.expiresIn
+                ) {
+                    await product.discount.destroy();
+                    product?.set({
+                        discountPrice: null,
+                    });
+                    await product?.save();
+                }
+            });
             return res.json(products);
         } catch (error) {
             if (error instanceof Error) {
@@ -90,10 +127,36 @@ class productController {
             const product = await Product.findOne({
                 where: { id },
                 include: [
-                    { model: Discount, as: 'discounts' },
+                    { model: Discount, as: 'discount' },
                     { model: Rating, as: 'ratings' },
+                    { model: CartProduct, as: 'cart_products' },
+                    { model: WishlistProduct, as: 'wishlist_products' },
+                    { model: OrderProduct, as: 'order_products' },
                 ],
             });
+            if (
+                product?.discount &&
+                product.discount.startsIn <= Date.now() &&
+                product.discount.expiresIn > Date.now()
+            ) {
+                product?.set({
+                    discountPrice: Math.ceil(
+                        product.price -
+                            (product.price / 100) * product.discount.percent,
+                    ),
+                });
+                await product?.save();
+            }
+            if (
+                product?.discount?.expiresIn &&
+                Date.now() > product.discount?.expiresIn
+            ) {
+                await product.discount.destroy();
+                product?.set({
+                    discountPrice: null,
+                });
+                await product?.save();
+            }
             return res.json(product);
         } catch (error) {
             if (error instanceof Error) {
