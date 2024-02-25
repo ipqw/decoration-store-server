@@ -4,7 +4,7 @@ import {
     Discount,
     OrderProduct,
     Product,
-    Rating,
+    Review,
     WishlistProduct,
 } from '../database/models';
 import ApiError from '../error/apiError';
@@ -128,7 +128,7 @@ class productController {
                 where: { id },
                 include: [
                     { model: Discount, as: 'discount' },
-                    { model: Rating, as: 'ratings' },
+                    { model: Review, as: 'reviews' },
                     { model: CartProduct, as: 'cart_products' },
                     { model: WishlistProduct, as: 'wishlist_products' },
                     { model: OrderProduct, as: 'order_products' },

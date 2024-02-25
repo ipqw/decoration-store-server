@@ -5,7 +5,7 @@ import {
     CartProduct,
     Like,
     Order,
-    Rating,
+    Review,
     User,
     Wishlist,
     WishlistProduct,
@@ -131,7 +131,7 @@ class userController {
                             { model: WishlistProduct, as: 'wishlist_products' },
                         ],
                     },
-                    { model: Rating, as: 'ratings' },
+                    { model: Review, as: 'reviews' },
                     { model: Like, as: 'likes' },
                     { model: Address, as: 'addresses' },
                     { model: Order, as: 'orders' },
@@ -235,7 +235,7 @@ class userController {
                             { model: WishlistProduct, as: 'wishlist_products' },
                         ],
                     },
-                    { model: Rating, as: 'ratings' },
+                    { model: Review, as: 'reviews' },
                     { model: Like, as: 'likes' },
                     { model: Address, as: 'addresses' },
                     { model: Order, as: 'orders' },
@@ -255,8 +255,8 @@ class userController {
                 });
                 await user.wishlist?.destroy();
 
-                // ratings
-                user.ratings?.forEach(async (el) => {
+                // reviews
+                user.reviews?.forEach(async (el) => {
                     await el.destroy();
                 });
 

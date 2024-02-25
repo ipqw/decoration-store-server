@@ -23,8 +23,8 @@ class reviewController {
     };
     getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const ratings = await Review.findAll();
-            return res.json(ratings);
+            const reviews = await Review.findAll();
+            return res.json(reviews);
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
