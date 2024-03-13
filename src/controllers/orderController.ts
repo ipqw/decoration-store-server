@@ -91,6 +91,7 @@ class orderController {
                     ? paymentMethod
                     : order.paymentMethod,
             });
+            await order?.save();
             return res.json(order);
         } catch (error) {
             if (error instanceof Error) {

@@ -20,6 +20,7 @@ class discountController {
             if (product?.discount) {
                 await product.discount.destroy();
                 product.set({ discountPrice: null });
+                await product?.save();
             }
             const discount = await Discount.create({
                 startsIn,

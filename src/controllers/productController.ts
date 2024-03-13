@@ -61,7 +61,7 @@ class productController {
                             images.push(result.url);
                         }
                         product?.set({ images });
-                        await product.save();
+                        await product?.save();
                     }
                     return res.json(product);
                 } catch (error) {
