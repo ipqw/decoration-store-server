@@ -123,6 +123,15 @@ export interface ProductModel
     wishlist_products?: WishlistProductModel[];
     order_products?: OrderProductModel[];
 }
+export interface ProductInfoModel
+    extends Model<
+        InferAttributes<ProductInfoModel>,
+        InferCreationAttributes<ProductInfoModel>
+    > {
+    id: CreationOptional<number>;
+    name: string;
+    text: string;
+}
 export interface DiscountModel
     extends Model<
         InferAttributes<DiscountModel>,

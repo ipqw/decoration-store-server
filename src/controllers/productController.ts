@@ -4,6 +4,7 @@ import {
     Discount,
     OrderProduct,
     Product,
+    ProductInfo,
     Review,
     WishlistProduct,
 } from '../database/models';
@@ -11,6 +12,7 @@ import ApiError from '../error/apiError';
 import streamifier from 'streamifier';
 import { v2 as cloudinary } from 'cloudinary';
 import { FileArray, UploadedFile } from 'express-fileupload';
+import { ProductInfoModel } from '../types/sequelizeTypes';
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -37,12 +39,18 @@ class productController {
         try {
             async function upload(req: Request) {
                 try {
-                    const { name, price, typeId } = req.body;
+                    const { name, price, typeId, info } = req.body;
                     const product = await Product.create({
                         name,
                         price,
                         typeId,
                         averageRate: 0,
+                    });
+                    info?.forEach(async (el: ProductInfoModel) => {
+                        await ProductInfo.create({
+                            name: el.name,
+                            text: el.text,
+                        });
                     });
                     if (req.files) {
                         const img = req.files?.img;

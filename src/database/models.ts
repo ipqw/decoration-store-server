@@ -8,6 +8,7 @@ import {
     LikeModel,
     OrderModel,
     OrderProductModel,
+    ProductInfoModel,
     ProductModel,
     ReviewModel,
     TypeModel,
@@ -15,6 +16,7 @@ import {
     WishlistModel,
     WishlistProductModel,
 } from '../types/sequelizeTypes';
+import { text } from 'express';
 
 export const User = sequelize.define<UserModel>('user', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -97,6 +99,11 @@ export const Product = sequelize.define<ProductModel>('product', {
     discountPrice: { type: DataTypes.FLOAT, allowNull: true },
     typeId: { type: DataTypes.INTEGER, allowNull: false },
 });
+export const ProductInfo = sequelize.define<ProductInfoModel>('product', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    name: { type: DataTypes.STRING, unique: false, allowNull: false },
+    text: { type: DataTypes.STRING, unique: false, allowNull: false },
+});
 export const Discount = sequelize.define<DiscountModel>('discount', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     percent: { type: DataTypes.INTEGER, unique: false, allowNull: false },
@@ -169,6 +176,9 @@ Product.hasOne(Discount, {
     foreignKey: 'productId',
 });
 Discount.belongsTo(Product);
+
+Product.hasMany(ProductInfo);
+ProductInfo.belongsTo(Product);
 
 Product.hasMany(Review, {
     foreignKey: 'productId',
