@@ -99,7 +99,7 @@ export const Product = sequelize.define<ProductModel>('product', {
     discountPrice: { type: DataTypes.FLOAT, allowNull: true },
     typeId: { type: DataTypes.INTEGER, allowNull: false },
 });
-export const ProductInfo = sequelize.define<ProductInfoModel>('product', {
+export const ProductInfo = sequelize.define<ProductInfoModel>('product_info', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, unique: false, allowNull: false },
     text: { type: DataTypes.STRING, unique: false, allowNull: false },

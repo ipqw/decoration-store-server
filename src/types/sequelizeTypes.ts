@@ -131,6 +131,7 @@ export interface ProductInfoModel
     id: CreationOptional<number>;
     name: string;
     text: string;
+    productId?: ForeignKey<ProductModel['id']>;
 }
 export interface DiscountModel
     extends Model<

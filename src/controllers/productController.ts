@@ -11,7 +11,7 @@ import {
 import ApiError from '../error/apiError';
 import streamifier from 'streamifier';
 import { v2 as cloudinary } from 'cloudinary';
-import { FileArray, UploadedFile } from 'express-fileupload';
+import { UploadedFile } from 'express-fileupload';
 import { ProductInfoModel } from '../types/sequelizeTypes';
 
 cloudinary.config({
@@ -46,10 +46,11 @@ class productController {
                         typeId,
                         averageRate: 0,
                     });
-                    info?.forEach(async (el: ProductInfoModel) => {
+                    JSON.parse(info)?.forEach(async (el: ProductInfoModel) => {
                         await ProductInfo.create({
                             name: el.name,
                             text: el.text,
+                            productId: product.id,
                         });
                     });
                     if (req.files) {
@@ -146,6 +147,7 @@ class productController {
                     { model: CartProduct, as: 'cart_products' },
                     { model: WishlistProduct, as: 'wishlist_products' },
                     { model: OrderProduct, as: 'order_products' },
+                    { model: ProductInfo, as: 'product_infos' },
                 ],
             });
             if (
