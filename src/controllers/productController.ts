@@ -4,6 +4,7 @@ import {
     Discount,
     OrderProduct,
     Product,
+    ProductColorsGroup,
     ProductInfo,
     Review,
     WishlistProduct,
@@ -39,12 +40,19 @@ class productController {
         try {
             async function upload(req: Request) {
                 try {
-                    const { name, price, typeId, info } = req.body;
+                    const { name, price, typeId, info, productGroupId } =
+                        req.body;
+                    const productGroup = productGroupId
+                        ? await ProductColorsGroup.findOne({
+                              where: { id: productGroupId },
+                          })
+                        : await ProductColorsGroup.create();
                     const product = await Product.create({
                         name,
                         price,
                         typeId,
                         averageRate: 0,
+                        productGroupId: productGroup?.id,
                     });
                     JSON.parse(info)?.forEach(async (el: ProductInfoModel) => {
                         await ProductInfo.create({
@@ -148,6 +156,11 @@ class productController {
                     { model: WishlistProduct, as: 'wishlist_products' },
                     { model: OrderProduct, as: 'order_products' },
                     { model: ProductInfo, as: 'product_infos' },
+                    {
+                        model: ProductColorsGroup,
+                        as: 'product_group',
+                        include: [{ model: Product, as: 'products' }],
+                    },
                 ],
             });
             if (

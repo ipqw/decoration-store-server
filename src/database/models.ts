@@ -8,6 +8,7 @@ import {
     LikeModel,
     OrderModel,
     OrderProductModel,
+    ProductColorsGroupModel,
     ProductInfoModel,
     ProductModel,
     ReviewModel,
@@ -99,11 +100,20 @@ export const Product = sequelize.define<ProductModel>('product', {
     discountPrice: { type: DataTypes.FLOAT, allowNull: true },
     typeId: { type: DataTypes.INTEGER, allowNull: false },
 });
+
 export const ProductInfo = sequelize.define<ProductInfoModel>('product_info', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, unique: false, allowNull: false },
     text: { type: DataTypes.STRING, unique: false, allowNull: false },
 });
+
+export const ProductColorsGroup = sequelize.define<ProductColorsGroupModel>(
+    'product_group',
+    {
+        id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    },
+);
+
 export const Discount = sequelize.define<DiscountModel>('discount', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     percent: { type: DataTypes.INTEGER, unique: false, allowNull: false },
@@ -170,6 +180,10 @@ Wishlist.hasMany(WishlistProduct, {
     foreignKey: 'wishlistId',
 });
 WishlistProduct.belongsTo(Wishlist);
+
+// ProductColorsGroup
+ProductColorsGroup.hasMany(Product, { foreignKey: 'productGroupId' });
+Product.belongsTo(ProductColorsGroup);
 
 // Product
 Product.hasOne(Discount, {
