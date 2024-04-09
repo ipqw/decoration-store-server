@@ -16,6 +16,10 @@ wishlistProductRouter.post(
     wishlistProductController.createWishlistProduct,
 );
 wishlistProductRouter.delete(
-    '/:id',
+    '/',
     wishlistProductController.deleteWishlistProduct,
+);
+wishlistProductRouter.delete(
+    '/:id',
+    wishlistProductController.deleteWishlistProductById,
 );

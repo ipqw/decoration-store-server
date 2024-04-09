@@ -69,7 +69,33 @@ class cartWishlistController {
             }
         }
     };
+
     deleteWishlistProduct = async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            const { productId, wishlistId } = req.body;
+            const wishlistProduct = await WishlistProduct.findOne({
+                where: { productId, wishlistId },
+            });
+            if (wishlistProduct) {
+                await wishlistProduct.destroy();
+                return res.json({ message: 'WishlistProduct was deleted' });
+            } else {
+                next(ApiError.badRequest('WishlistProduct was not found'));
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                next(ApiError.badRequest(error.message));
+            } else {
+                next(ApiError.internal('Something went wrong'));
+            }
+        }
+    };
+
+    deleteWishlistProductById = async (
         req: Request,
         res: Response,
         next: NextFunction,
