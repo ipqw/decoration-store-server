@@ -19,12 +19,13 @@ class cartWishlistController {
                         'Product already added to the wishlist',
                     ),
                 );
+            } else {
+                const wishlistProduct = await WishlistProduct.create({
+                    productId,
+                    wishlistId,
+                });
+                return res.json(wishlistProduct);
             }
-            const wishlistProduct = await WishlistProduct.create({
-                productId,
-                wishlistId,
-            });
-            return res.json(wishlistProduct);
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
