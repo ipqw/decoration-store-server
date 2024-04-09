@@ -78,6 +78,30 @@ class cartProductController {
         next: NextFunction,
     ) => {
         try {
+            const { productId, cartId } = req.body;
+            const cartProduct = await CartProduct.findOne({
+                where: { productId, cartId },
+            });
+            if (cartProduct) {
+                await cartProduct.destroy();
+                return res.json({ message: 'CartProduct was deleted' });
+            } else {
+                next(ApiError.badRequest('CartProduct was not found'));
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                next(ApiError.badRequest(error.message));
+            } else {
+                next(ApiError.internal('Something went wrong'));
+            }
+        }
+    };
+    deleteCartProductById = async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        try {
             const { id } = req.params;
             const cartProduct = await CartProduct.findOne({ where: { id } });
             if (cartProduct) {

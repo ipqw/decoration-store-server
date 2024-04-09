@@ -6,4 +6,5 @@ export const cartProductRouter = express();
 cartProductRouter.get('/', cartProductController.getAllCartProducts);
 cartProductRouter.get('/:id', cartProductController.getOneCartProduct);
 cartProductRouter.post('/', cartProductController.createCartProduct);
-cartProductRouter.delete('/:id', cartProductController.deleteCartProduct);
+cartProductRouter.delete('/', cartProductController.deleteCartProduct);
+cartProductRouter.delete('/:id', cartProductController.deleteCartProductById);
