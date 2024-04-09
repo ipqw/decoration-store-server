@@ -7,6 +7,7 @@ import {
     ProductColorsGroup,
     ProductInfo,
     Review,
+    Type,
     WishlistProduct,
 } from '../database/models';
 import ApiError from '../error/apiError';
@@ -150,6 +151,7 @@ class productController {
             const product = await Product.findOne({
                 where: { id },
                 include: [
+                    { model: Type, as: 'type' },
                     { model: Discount, as: 'discount' },
                     { model: Review, as: 'reviews' },
                     { model: CartProduct, as: 'cart_products' },
