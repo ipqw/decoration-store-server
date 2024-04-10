@@ -4,7 +4,7 @@ import {
     Discount,
     OrderProduct,
     Product,
-    ProductColorsGroup,
+    ProductGroup,
     ProductInfo,
     Review,
     Type,
@@ -44,10 +44,10 @@ class productController {
                     const { name, price, typeId, info, productGroupId } =
                         req.body;
                     const productGroup = productGroupId
-                        ? await ProductColorsGroup.findOne({
+                        ? await ProductGroup.findOne({
                               where: { id: productGroupId },
                           })
-                        : await ProductColorsGroup.create();
+                        : await ProductGroup.create();
                     const product = await Product.create({
                         name,
                         price,
@@ -153,15 +153,17 @@ class productController {
                 include: [
                     { model: Type, as: 'type' },
                     { model: Discount, as: 'discount' },
-                    { model: Review, as: 'reviews' },
                     { model: CartProduct, as: 'cart_products' },
                     { model: WishlistProduct, as: 'wishlist_products' },
                     { model: OrderProduct, as: 'order_products' },
                     { model: ProductInfo, as: 'product_infos' },
                     {
-                        model: ProductColorsGroup,
+                        model: ProductGroup,
                         as: 'product_group',
-                        include: [{ model: Product, as: 'products' }],
+                        include: [
+                            { model: Product, as: 'products' },
+                            { model: Review, as: 'reviews' },
+                        ],
                     },
                 ],
             });

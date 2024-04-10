@@ -5,12 +5,12 @@ import { Review } from '../database/models';
 class reviewController {
     createReview = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { rate, text, userId, productId } = req.body;
+            const { rate, text, userId, productGroupId } = req.body;
             const review = await Review.create({
                 rate,
                 text,
                 userId,
-                productId,
+                productGroupId,
             });
             return res.json(review);
         } catch (error) {

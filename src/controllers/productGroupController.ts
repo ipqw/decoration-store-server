@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import ApiError from '../error/apiError';
-import { Product, ProductColorsGroup } from '../database/models';
+import { Product, ProductGroup } from '../database/models';
 
 class productGroupController {
     getAllProductGroups = async (
@@ -9,7 +9,7 @@ class productGroupController {
         next: NextFunction,
     ) => {
         try {
-            const productGroups = await ProductColorsGroup.findAll();
+            const productGroups = await ProductGroup.findAll();
             return res.json(productGroups);
         } catch (error) {
             if (error instanceof Error) {
@@ -26,7 +26,7 @@ class productGroupController {
     ) => {
         try {
             const { id } = req.params;
-            const productGroup = await ProductColorsGroup.findOne({
+            const productGroup = await ProductGroup.findOne({
                 where: { id },
                 include: [{ model: Product, as: 'products' }],
             });

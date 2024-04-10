@@ -8,7 +8,7 @@ import {
     LikeModel,
     OrderModel,
     OrderProductModel,
-    ProductColorsGroupModel,
+    ProductGroupModel,
     ProductInfoModel,
     ProductModel,
     ReviewModel,
@@ -107,7 +107,7 @@ export const ProductInfo = sequelize.define<ProductInfoModel>('product_info', {
     text: { type: DataTypes.STRING, unique: false, allowNull: false },
 });
 
-export const ProductColorsGroup = sequelize.define<ProductColorsGroupModel>(
+export const ProductGroup = sequelize.define<ProductGroupModel>(
     'product_group',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -130,7 +130,7 @@ export const Review = sequelize.define<ReviewModel>('review', {
     rate: { type: DataTypes.INTEGER, allowNull: false },
     text: { type: DataTypes.STRING, allowNull: false },
     userId: { type: DataTypes.INTEGER, allowNull: false },
-    productId: { type: DataTypes.INTEGER, allowNull: false },
+    productGroupId: { type: DataTypes.INTEGER, allowNull: false },
 });
 export const Like = sequelize.define<LikeModel>('like', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -181,9 +181,14 @@ Wishlist.hasMany(WishlistProduct, {
 });
 WishlistProduct.belongsTo(Wishlist);
 
-// ProductColorsGroup
-ProductColorsGroup.hasMany(Product, { foreignKey: 'productGroupId' });
-Product.belongsTo(ProductColorsGroup);
+// ProductGroup
+ProductGroup.hasMany(Product, { foreignKey: 'productGroupId' });
+Product.belongsTo(ProductGroup);
+
+ProductGroup.hasMany(Review, {
+    foreignKey: 'productGroupId',
+});
+Review.belongsTo(ProductGroup);
 
 // Product
 Product.hasOne(Discount, {
@@ -193,11 +198,6 @@ Discount.belongsTo(Product);
 
 Product.hasMany(ProductInfo);
 ProductInfo.belongsTo(Product);
-
-Product.hasMany(Review, {
-    foreignKey: 'productId',
-});
-Review.belongsTo(Product);
 
 Product.hasMany(WishlistProduct, {
     foreignKey: 'productId',

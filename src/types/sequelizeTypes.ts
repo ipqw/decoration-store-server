@@ -117,7 +117,7 @@ export interface ProductModel
     price: number;
     discountPrice: number | null;
     typeId: ForeignKey<TypeModel['id']>;
-    productGroupId?: ForeignKey<ProductColorsGroupModel['id']>;
+    productGroupId?: ForeignKey<ProductGroupModel['id']>;
     discount?: DiscountModel;
     reviews?: ReviewModel[];
     cart_products?: CartProductModel[];
@@ -134,10 +134,10 @@ export interface ProductInfoModel
     text: string;
     productId?: ForeignKey<ProductModel['id']>;
 }
-export interface ProductColorsGroupModel
+export interface ProductGroupModel
     extends Model<
-        InferAttributes<ProductColorsGroupModel>,
-        InferCreationAttributes<ProductColorsGroupModel>
+        InferAttributes<ProductGroupModel>,
+        InferCreationAttributes<ProductGroupModel>
     > {
     id: CreationOptional<number>;
     products?: ProductModel[];
@@ -170,7 +170,7 @@ export interface ReviewModel
     rate: number;
     text: string;
     userId: ForeignKey<UserModel['id']>;
-    productId: ForeignKey<ProductModel['id']>;
+    productGroupId: ForeignKey<ProductGroupModel['id']>;
 }
 export interface LikeModel
     extends Model<
