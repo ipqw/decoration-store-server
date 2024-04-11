@@ -25,7 +25,7 @@ cloudinary.config({
 
 const generateJWT = (id: number, email: string, role: string) => {
     return jwt.sign({ id, email, role }, process.env.SECRET_KEY || '', {
-        expiresIn: '12h',
+        expiresIn: '30m',
     });
 };
 
@@ -93,6 +93,54 @@ class userController {
                 }
             }
             upload(req);
+        } catch (error) {
+            if (error instanceof Error) {
+                next(ApiError.badRequest(error.message));
+            } else {
+                next(ApiError.internal('Something went wrong'));
+            }
+        }
+    };
+    login = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { email, password } = req.body;
+            const user = await User.findOne({ where: { email } });
+            if (!user) {
+                return next(ApiError.internal('Wrong email'));
+            }
+            const comparedPassword = bcrypt.compareSync(
+                password,
+                user.password,
+            );
+            if (!comparedPassword) {
+                return next(ApiError.internal('Wrong password'));
+            }
+            const token = generateJWT(user.id, user.email, user.role);
+            return res.json({ token, userId: user.id });
+        } catch (error) {
+            if (error instanceof Error) {
+                next(ApiError.badRequest(error.message));
+            } else {
+                next(ApiError.internal('Something went wrong'));
+            }
+        }
+    };
+    check = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const token = req.headers.authorization || '';
+            if (!token) {
+                next(ApiError.unauthorized('User has not been authenticated'));
+            }
+            const decodedToken: any = jwt.verify(
+                token,
+                process.env.SECRET_KEY || '',
+            );
+            const newToken = generateJWT(
+                decodedToken?.id,
+                decodedToken?.email,
+                decodedToken?.role,
+            );
+            return res.json({ newToken });
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
