@@ -83,7 +83,7 @@ class userController {
                     }
                     const token = generateJWT(user.id, user.email, user.role);
 
-                    return res.json({ token, userId: user.id });
+                    return res.json({ token, user });
                 } catch (error) {
                     if (error instanceof Error) {
                         next(ApiError.badRequest(error.message));
@@ -116,7 +116,7 @@ class userController {
                 return next(ApiError.internal('Wrong password'));
             }
             const token = generateJWT(user.id, user.email, user.role);
-            return res.json({ token, userId: user.id });
+            return res.json({ token, user });
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
