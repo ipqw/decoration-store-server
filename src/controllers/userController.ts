@@ -140,7 +140,10 @@ class userController {
                 decodedToken?.email,
                 decodedToken?.role,
             );
-            return res.json({ newToken });
+            const user = await User.findOne({
+                where: { id: decodedToken?.id, email: decodedToken?.email },
+            });
+            return res.json({ newToken, user });
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
