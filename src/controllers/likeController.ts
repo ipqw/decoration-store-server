@@ -21,6 +21,16 @@ class likeController {
     };
     getAllLikes = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const { userId, reviewId } = req.query;
+            if (userId && reviewId) {
+                const like = await Like.findOne({
+                    where: {
+                        userId: Number(userId),
+                        reviewId: Number(reviewId),
+                    },
+                });
+                return res.json(like);
+            }
             const likes = await Like.findAll();
             return res.json(likes);
         } catch (error) {
