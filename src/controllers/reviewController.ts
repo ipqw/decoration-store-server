@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import ApiError from '../error/apiError';
-import { Review } from '../database/models';
+import { Like, Review } from '../database/models';
 
 class reviewController {
     createReview = async (req: Request, res: Response, next: NextFunction) => {
@@ -38,6 +38,12 @@ class reviewController {
             const { id } = req.params;
             const review = await Review.findOne({
                 where: { id },
+                include: [
+                    {
+                        model: Like,
+                        as: 'likes',
+                    },
+                ],
             });
             return res.json(review);
         } catch (error) {

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import {
     CartProduct,
     Discount,
+    Like,
     OrderProduct,
     Product,
     ProductGroup,
@@ -162,7 +163,11 @@ class productController {
                         as: 'product_group',
                         include: [
                             { model: Product, as: 'products' },
-                            { model: Review, as: 'reviews' },
+                            {
+                                model: Review,
+                                as: 'reviews',
+                                include: [{ model: Like, as: 'likes' }],
+                            },
                         ],
                     },
                 ],

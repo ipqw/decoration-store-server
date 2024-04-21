@@ -231,3 +231,9 @@ Order.hasMany(OrderProduct);
 OrderProduct.belongsTo(Order, {
     foreignKey: 'orderId',
 });
+
+// Review
+Review.hasMany(Like);
+Like.belongsTo(Review, {
+    foreignKey: 'reviewId',
+});
