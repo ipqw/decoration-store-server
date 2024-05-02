@@ -23,8 +23,18 @@ class reviewController {
     };
     getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const { productGroupId, limit = 5 } = req.body;
+            if (productGroupId) {
+                const reviews = await Review.findAll({
+                    include: { model: Like, as: 'likes' },
+                    where: { productGroupId },
+                    limit,
+                });
+                return res.json(reviews);
+            }
             const reviews = await Review.findAll({
                 include: { model: Like, as: 'likes' },
+                limit,
             });
             return res.json(reviews);
         } catch (error) {
