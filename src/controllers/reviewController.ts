@@ -23,7 +23,9 @@ class reviewController {
     };
     getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const reviews = await Review.findAll();
+            const reviews = await Review.findAll({
+                include: { model: Like, as: 'likes' },
+            });
             return res.json(reviews);
         } catch (error) {
             if (error instanceof Error) {

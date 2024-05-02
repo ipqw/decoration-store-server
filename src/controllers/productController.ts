@@ -161,14 +161,7 @@ class productController {
                     {
                         model: ProductGroup,
                         as: 'product_group',
-                        include: [
-                            { model: Product, as: 'products' },
-                            {
-                                model: Review,
-                                as: 'reviews',
-                                include: [{ model: Like, as: 'likes' }],
-                            },
-                        ],
+                        include: [{ model: Product, as: 'products' }],
                     },
                 ],
             });
