@@ -34,7 +34,19 @@ class reviewController {
     };
     getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { productGroupId, limit = 5 } = req.query;
+            const { productGroupId, limit = 5, userId } = req.query;
+            // get review by userID and ProducGroupId
+            if (userId && productGroupId) {
+                const userReview = await Review.findOne({
+                    where: {
+                        userId: Number(userId),
+                        productGroupId: Number(productGroupId),
+                    },
+                    include: { model: Like, as: 'likes' },
+                });
+                return res.json(userReview);
+            }
+            // default
             const amount = await Review.count();
             if (productGroupId && Number(productGroupId) !== 0) {
                 const reviews = await Review.findAll({
