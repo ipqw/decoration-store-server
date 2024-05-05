@@ -24,19 +24,20 @@ class reviewController {
     getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { productGroupId, limit = 5 } = req.query;
+            const amount = await Review.count();
             if (productGroupId && Number(productGroupId) !== 0) {
                 const reviews = await Review.findAll({
                     include: { model: Like, as: 'likes' },
                     where: { productGroupId: Number(productGroupId) },
                     limit: Number(limit),
                 });
-                return res.json(reviews);
+                return res.json({ reviews, amount });
             }
             const reviews = await Review.findAll({
                 include: { model: Like, as: 'likes' },
                 limit: Number(limit),
             });
-            return res.json(reviews);
+            return res.json({ reviews, amount });
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));

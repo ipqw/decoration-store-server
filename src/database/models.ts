@@ -17,7 +17,6 @@ import {
     WishlistModel,
     WishlistProductModel,
 } from '../types/sequelizeTypes';
-import { text } from 'express';
 
 export const User = sequelize.define<UserModel>('user', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
