@@ -6,13 +6,24 @@ class reviewController {
     createReview = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { rate, text, userId, productGroupId } = req.body;
-            const review = await Review.create({
-                rate,
-                text,
-                userId,
-                productGroupId,
+            const existedReview = await Review.findOne({
+                where: { userId, productGroupId },
             });
-            return res.json(review);
+            if (!existedReview) {
+                const review = await Review.create({
+                    rate,
+                    text,
+                    userId,
+                    productGroupId,
+                });
+                return res.json(review);
+            } else {
+                next(
+                    ApiError.badRequest(
+                        'Review with this userId and productGroupId already exists',
+                    ),
+                );
+            }
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
