@@ -13,6 +13,7 @@ import { discountRouter } from './discountRouter';
 import { reviewRouter } from './reviewRouter';
 import { likeRouter } from './likeRouter';
 import { productGroupRouter } from './productGroupRouter';
+import { productInfoRouter } from './productInfoRouter';
 
 export const router = express();
 
@@ -30,3 +31,4 @@ router.use('/discount', discountRouter);
 router.use('/review', reviewRouter);
 router.use('/like', likeRouter);
 router.use('/productgroup', productGroupRouter);
+router.use('/productinfo', productInfoRouter);
