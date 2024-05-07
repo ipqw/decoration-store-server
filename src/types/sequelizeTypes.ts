@@ -113,7 +113,6 @@ export interface ProductModel
     id: CreationOptional<number>;
     name: string;
     images: string[] | null;
-    averageRate: number;
     price: number;
     discountPrice: number | null;
     typeId: ForeignKey<TypeModel['id']>;
@@ -140,6 +139,7 @@ export interface ProductGroupModel
         InferCreationAttributes<ProductGroupModel>
     > {
     id: CreationOptional<number>;
+    averageRate: number;
     products?: ProductModel[];
 }
 export interface DiscountModel

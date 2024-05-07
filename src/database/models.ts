@@ -90,11 +90,6 @@ export const Product = sequelize.define<ProductModel>('product', {
         unique: false,
         allowNull: true,
     },
-    averageRate: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        defaultValue: 0,
-    },
     price: { type: DataTypes.FLOAT, allowNull: false },
     discountPrice: { type: DataTypes.FLOAT, allowNull: true },
     typeId: { type: DataTypes.INTEGER, allowNull: false },
@@ -110,6 +105,11 @@ export const ProductGroup = sequelize.define<ProductGroupModel>(
     'product_group',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+        averageRate: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+            defaultValue: 0,
+        },
     },
 );
 
