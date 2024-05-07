@@ -53,7 +53,6 @@ class productController {
                         name,
                         price,
                         typeId,
-                        averageRate: 0,
                         productGroupId: productGroup?.id,
                     });
                     JSON.parse(info)?.forEach(async (el: ProductInfoModel) => {
@@ -161,7 +160,10 @@ class productController {
                     {
                         model: ProductGroup,
                         as: 'product_group',
-                        include: [{ model: Product, as: 'products' }, {model: Review, as: 'reviews'}],
+                        include: [
+                            { model: Product, as: 'products' },
+                            { model: Review, as: 'reviews' },
+                        ],
                     },
                 ],
             });
