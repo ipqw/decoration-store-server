@@ -108,7 +108,10 @@ class productController {
             const { limit } = req.params;
             const products = await Product.findAll({
                 limit: Number(limit) || 40,
-                include: [{ model: Discount, as: 'discount' }],
+                include: [
+                    { model: Discount, as: 'discount' },
+                    { model: ProductGroup, as: 'product_group' },
+                ],
             });
             products.forEach(async (product) => {
                 if (
