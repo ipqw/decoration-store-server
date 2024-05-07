@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import ApiError from '../error/apiError';
-import { Like, Review } from '../database/models';
+import { Like, ProductGroup, Review } from '../database/models';
 
 class reviewController {
     createReview = async (req: Request, res: Response, next: NextFunction) => {
@@ -16,6 +16,20 @@ class reviewController {
                     userId,
                     productGroupId,
                 });
+                const productGroup = await ProductGroup.findOne({
+                    where: { id: productGroupId },
+                    include: { model: Review, as: 'reviews' },
+                });
+                let sum = 0;
+                productGroup?.reviews?.forEach((el) => {
+                    sum += el.rate;
+                });
+                productGroup?.set({
+                    averageRate: productGroup?.reviews
+                        ? sum / productGroup?.reviews?.length
+                        : 0,
+                });
+                await productGroup?.save();
                 return res.json(review);
             } else {
                 next(
@@ -102,6 +116,20 @@ class reviewController {
                 text,
             });
             await review?.save();
+            const productGroup = await ProductGroup.findOne({
+                where: { id: review ? review.productGroupId : 0 },
+                include: { model: Review, as: 'reviews' },
+            });
+            let sum = 0;
+            productGroup?.reviews?.forEach((el) => {
+                sum += el.rate;
+            });
+            productGroup?.set({
+                averageRate: productGroup?.reviews
+                    ? sum / productGroup?.reviews?.length
+                    : 0,
+            });
+            await productGroup?.save();
             return res.json(review);
         } catch (error) {
             if (error instanceof Error) {
@@ -116,6 +144,20 @@ class reviewController {
             const { id } = req.params;
             const review = await Review.findOne({ where: { id } });
             if (review) {
+                const productGroup = await ProductGroup.findOne({
+                    where: { id: review.productGroupId },
+                    include: { model: Review, as: 'reviews' },
+                });
+                let sum = 0;
+                productGroup?.reviews?.forEach((el) => {
+                    sum += el.rate;
+                });
+                productGroup?.set({
+                    averageRate: productGroup?.reviews
+                        ? sum / productGroup?.reviews?.length
+                        : 0,
+                });
+                await productGroup?.save();
                 await review.destroy();
                 return res.json({ message: 'Review was deleted' });
             } else {

@@ -141,6 +141,7 @@ export interface ProductGroupModel
     id: CreationOptional<number>;
     averageRate: number;
     products?: ProductModel[];
+    reviews?: ReviewModel[];
 }
 export interface DiscountModel
     extends Model<
