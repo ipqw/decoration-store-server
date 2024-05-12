@@ -111,6 +111,7 @@ class productController {
                 include: [
                     { model: Discount, as: 'discount' },
                     { model: ProductGroup, as: 'product_group' },
+                    { model: ProductInfo, as: 'product_infos' },
                 ],
             });
             products.forEach(async (product) => {
