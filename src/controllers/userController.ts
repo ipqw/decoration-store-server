@@ -104,7 +104,18 @@ class userController {
     login = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { email, password } = req.body;
-            const user = await User.findOne({ where: { email } });
+            const user = await User.findOne({
+                where: { email },
+                include: [
+                    {
+                        model: Wishlist,
+                        as: 'wishlist',
+                        include: [
+                            { model: WishlistProduct, as: 'wishlist_products' },
+                        ],
+                    },
+                ],
+            });
             if (!user) {
                 return next(ApiError.internal('Wrong email'));
             }
@@ -142,6 +153,15 @@ class userController {
             );
             const user = await User.findOne({
                 where: { id: decodedToken?.id, email: decodedToken?.email },
+                include: [
+                    {
+                        model: Wishlist,
+                        as: 'wishlist',
+                        include: [
+                            { model: WishlistProduct, as: 'wishlist_products' },
+                        ],
+                    },
+                ],
             });
             return res.json({ newToken, user });
         } catch (error) {
