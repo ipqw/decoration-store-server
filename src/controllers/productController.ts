@@ -112,6 +112,7 @@ class productController {
                     { model: Discount, as: 'discount' },
                     { model: ProductGroup, as: 'product_group' },
                     { model: ProductInfo, as: 'product_infos' },
+                    { model: Type, as: 'type' },
                 ],
             });
             products.forEach(async (product) => {
