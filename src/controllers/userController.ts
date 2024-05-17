@@ -161,6 +161,11 @@ class userController {
                             { model: WishlistProduct, as: 'wishlist_products' },
                         ],
                     },
+                    {
+                        model: Cart,
+                        as: 'cart',
+                        include: [{ model: CartProduct, as: 'cart_products' }],
+                    },
                 ],
             });
             return res.json({ newToken, user });
