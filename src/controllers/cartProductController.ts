@@ -42,6 +42,15 @@ class cartProductController {
         next: NextFunction,
     ) => {
         try {
+            const { cartId } = req.query;
+            if (cartId) {
+                const cartProducts = await CartProduct.findAll({
+                    where: {
+                        cartId: Number(cartId),
+                    },
+                });
+                return res.json(cartProducts);
+            }
             const cartProducts = await CartProduct.findAll();
             return res.json(cartProducts);
         } catch (error) {
