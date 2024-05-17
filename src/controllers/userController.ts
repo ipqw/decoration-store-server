@@ -164,7 +164,6 @@ class userController {
                     {
                         model: Cart,
                         as: 'cart',
-                        include: [{ model: CartProduct, as: 'cart_products' }],
                     },
                 ],
             });
