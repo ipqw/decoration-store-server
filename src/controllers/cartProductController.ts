@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import ApiError from '../error/apiError';
-import { CartProduct, Product } from '../database/models';
+import { CartProduct, Product, ProductInfo } from '../database/models';
 import { CartProductModel } from '../types/sequelizeTypes';
 
 class cartProductController {
@@ -48,6 +48,15 @@ class cartProductController {
                     where: {
                         cartId: Number(cartId),
                     },
+                    include: [
+                        {
+                            model: Product,
+                            as: 'product',
+                            include: [
+                                { model: ProductInfo, as: 'product_infos' },
+                            ],
+                        },
+                    ],
                 });
                 return res.json(cartProducts);
             }
