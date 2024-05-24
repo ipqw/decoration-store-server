@@ -114,6 +114,10 @@ class userController {
                             { model: WishlistProduct, as: 'wishlist_products' },
                         ],
                     },
+                    {
+                        model: Cart,
+                        as: 'cart',
+                    },
                 ],
             });
             if (!user) {
