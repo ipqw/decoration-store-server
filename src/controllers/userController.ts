@@ -118,6 +118,10 @@ class userController {
                         model: Cart,
                         as: 'cart',
                     },
+                    {
+                        model: Address,
+                        as: 'addresses',
+                    },
                 ],
             });
             if (!user) {
@@ -168,6 +172,10 @@ class userController {
                     {
                         model: Cart,
                         as: 'cart',
+                    },
+                    {
+                        model: Address,
+                        as: 'addresses',
                     },
                 ],
             });
