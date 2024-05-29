@@ -3,39 +3,6 @@ import { Address, Order } from '../database/models';
 import ApiError from '../error/apiError';
 
 class addressController {
-    createAddress = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const {
-                name,
-                recipientName,
-                phoneNumber,
-                country,
-                city,
-                zipcode,
-                street,
-                houseNumber,
-                userId,
-            } = req.body;
-            const address = await Address.create({
-                name,
-                recipientName,
-                phoneNumber,
-                country,
-                city,
-                zipcode,
-                street,
-                houseNumber,
-                userId,
-            });
-            return res.json(address);
-        } catch (error) {
-            if (error instanceof Error) {
-                next(ApiError.badRequest(error.message));
-            } else {
-                next(ApiError.internal('Something went wrong'));
-            }
-        }
-    };
     getAllAddresses = async (
         req: Request,
         res: Response,
@@ -71,26 +38,15 @@ class addressController {
     updateAddress = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            const {
-                name,
-                recipientName,
-                phoneNumber,
-                country,
-                city,
-                zipcode,
-                street,
-                houseNumber,
-            } = req.body;
+            const { name, country, city, zipcode, street, state } = req.body;
             const address = await Address.findOne({ where: { id } });
             address?.set({
                 name: name ? name : address.name,
-                recipientName: recipientName ? recipientName : address.name,
-                phoneNumber: phoneNumber ? phoneNumber : address.phoneNumber,
                 country: country ? country : address.country,
                 city: city ? city : address.city,
                 zipcode: zipcode ? zipcode : address.zipcode,
-                street: street ? street : address.street,
-                houseNumber: houseNumber ? houseNumber : address.houseNumber,
+                streetAddress: street ? street : address.streetAddress,
+                state: state ? state : address.state,
             });
             address?.save();
             return res.json(address);

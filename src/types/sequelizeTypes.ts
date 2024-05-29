@@ -34,13 +34,11 @@ export interface AddressModel
     > {
     id: CreationOptional<number>;
     name: string;
-    recipientName: string;
-    phoneNumber: string;
     country: string;
     city: string;
-    zipcode: string | null;
-    street: string;
-    houseNumber: number;
+    zipcode?: string;
+    state?: string;
+    streetAddress: string;
     userId: ForeignKey<UserModel['id']>;
     orders?: OrderModel[];
 }
@@ -66,6 +64,19 @@ export interface OrderProductModel
     id: CreationOptional<number>;
     orderId: ForeignKey<OrderModel['id']>;
     productId: ForeignKey<ProductModel['id']>;
+}
+
+export interface OrderRecipientModel
+    extends Model<
+        InferAttributes<OrderRecipientModel>,
+        InferCreationAttributes<OrderRecipientModel>
+    > {
+    id: CreationOptional<number>;
+    orderId: ForeignKey<OrderModel['id']>;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    email: string;
 }
 
 export interface CartModel

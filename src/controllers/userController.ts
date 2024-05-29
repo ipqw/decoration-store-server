@@ -74,6 +74,20 @@ class userController {
                     });
                     await Cart.create({ userId: user.id });
                     await Wishlist.create({ userId: user.id });
+                    await Address.create({
+                        name: 'Billing Address',
+                        country: 'Unknown',
+                        city: 'Unknown',
+                        streetAddress: 'Unknown',
+                        userId: user.id,
+                    });
+                    await Address.create({
+                        name: 'Shipping Address',
+                        country: 'Unknown',
+                        city: 'Unknown',
+                        streetAddress: 'Unknown',
+                        userId: user.id,
+                    });
                     if (req.files) {
                         const result: any = await streamUpload(req).catch(
                             (err) => next(ApiError.internal(err)),

@@ -8,6 +8,7 @@ import {
     LikeModel,
     OrderModel,
     OrderProductModel,
+    OrderRecipientModel,
     ProductGroupModel,
     ProductInfoModel,
     ProductModel,
@@ -32,13 +33,11 @@ export const User = sequelize.define<UserModel>('user', {
 export const Address = sequelize.define<AddressModel>('address', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, allowNull: false },
-    recipientName: { type: DataTypes.STRING, allowNull: false },
-    phoneNumber: { type: DataTypes.INTEGER, allowNull: false },
     country: { type: DataTypes.STRING, allowNull: false },
     city: { type: DataTypes.STRING, allowNull: false },
-    zipcode: { type: DataTypes.INTEGER, allowNull: true },
-    street: { type: DataTypes.STRING, allowNull: false },
-    houseNumber: { type: DataTypes.INTEGER, allowNull: false },
+    zipcode: { type: DataTypes.STRING, allowNull: true },
+    state: { type: DataTypes.STRING, allowNull: true },
+    streetAddress: { type: DataTypes.STRING, allowNull: false },
     userId: { type: DataTypes.INTEGER, allowNull: false },
 });
 
@@ -56,6 +55,17 @@ export const OrderProduct = sequelize.define<OrderProductModel>(
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
         productId: { type: DataTypes.INTEGER, allowNull: false },
         orderId: { type: DataTypes.INTEGER, allowNull: false },
+    },
+);
+export const orderRecipient = sequelize.define<OrderRecipientModel>(
+    'order_recipient',
+    {
+        id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+        orderId: { type: DataTypes.INTEGER, allowNull: false },
+        firstName: { type: DataTypes.STRING, allowNull: false },
+        lastName: { type: DataTypes.STRING, allowNull: false },
+        phoneNumber: { type: DataTypes.STRING, allowNull: false },
+        email: { type: DataTypes.STRING, allowNull: false },
     },
 );
 
