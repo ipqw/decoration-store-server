@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Order, OrderProduct } from '../database/models';
+import { Order, OrderProduct, OrderRecipient } from '../database/models';
 import ApiError from '../error/apiError';
 import { OrderProductModel } from '../types/sequelizeTypes';
 
@@ -13,35 +13,62 @@ class orderController {
                 paymentMethod,
                 userId,
                 products,
+                firstName,
+                lastName,
+                phoneNumber,
+                email,
             } = req.body;
-            const order = await Order.create({
-                status,
-                price,
-                addressId,
-                userId,
-                paymentMethod,
-            });
+            if (
+                status &&
+                price &&
+                addressId &&
+                paymentMethod &&
+                userId &&
+                products &&
+                firstName &&
+                lastName &&
+                phoneNumber &&
+                email
+            ) {
+                const order = await Order.create({
+                    status,
+                    price,
+                    addressId,
+                    userId,
+                    paymentMethod,
+                });
 
-            const parsedProducts = JSON.parse(products);
-            await parsedProducts.forEach(async (e: OrderProductModel) => {
-                try {
-                    await OrderProduct.create({
-                        orderId: order.id,
-                        productId: e.productId,
-                    });
-                } catch (error) {
-                    order.order_products?.forEach(async (el) => {
-                        await el.destroy();
-                    });
-                    await order.destroy();
-                    if (error instanceof Error) {
-                        next(ApiError.badRequest(error.message));
-                    } else {
-                        next(ApiError.internal('Something went wrong'));
+                const orderRecipient = await OrderRecipient.create({
+                    firstName,
+                    lastName,
+                    phoneNumber,
+                    email,
+                    orderId: order.id,
+                });
+
+                const parsedProducts = JSON.parse(products);
+                await parsedProducts.forEach(async (e: OrderProductModel) => {
+                    try {
+                        await OrderProduct.create({
+                            orderId: order.id,
+                            productId: e.productId,
+                        });
+                    } catch (error) {
+                        order.order_products?.forEach(async (el) => {
+                            await el.destroy();
+                        });
+                        await order.destroy();
+                        if (error instanceof Error) {
+                            next(ApiError.badRequest(error.message));
+                        } else {
+                            next(ApiError.internal('Something went wrong'));
+                        }
                     }
-                }
-            });
-            return res.json(order);
+                });
+                return res.json(order);
+            } else {
+                return res.json('Fields aren`t filled');
+            }
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
@@ -67,7 +94,10 @@ class orderController {
             const { id } = req.params;
             const order = await Order.findOne({
                 where: { id },
-                include: [{ model: OrderProduct, as: 'order_products' }],
+                include: [
+                    { model: OrderProduct, as: 'order_products' },
+                    { model: OrderRecipient, as: 'order_recipient' },
+                ],
             });
             return res.json(order);
         } catch (error) {

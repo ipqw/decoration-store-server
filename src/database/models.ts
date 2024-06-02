@@ -57,7 +57,7 @@ export const OrderProduct = sequelize.define<OrderProductModel>(
         orderId: { type: DataTypes.INTEGER, allowNull: false },
     },
 );
-export const orderRecipient = sequelize.define<OrderRecipientModel>(
+export const OrderRecipient = sequelize.define<OrderRecipientModel>(
     'order_recipient',
     {
         id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -238,6 +238,10 @@ Order.belongsTo(Address, {
 // Order
 Order.hasMany(OrderProduct);
 OrderProduct.belongsTo(Order, {
+    foreignKey: 'orderId',
+});
+Order.hasOne(OrderRecipient);
+OrderRecipient.belongsTo(Order, {
     foreignKey: 'orderId',
 });
 
