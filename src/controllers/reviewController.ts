@@ -61,8 +61,10 @@ class reviewController {
                 return res.json(userReview);
             }
             // default
-            const amount = await Review.count();
             if (productGroupId && Number(productGroupId) !== 0) {
+                const amount = await Review.count({
+                    where: { productGroupId: Number(productGroupId) },
+                });
                 const reviews = await Review.findAll({
                     include: { model: Like, as: 'likes' },
                     where: { productGroupId: Number(productGroupId) },
@@ -70,6 +72,7 @@ class reviewController {
                 });
                 return res.json({ reviews, amount });
             }
+            const amount = await Review.count();
             const reviews = await Review.findAll({
                 include: { model: Like, as: 'likes' },
                 limit: Number(limit),
