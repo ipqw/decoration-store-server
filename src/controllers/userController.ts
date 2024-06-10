@@ -274,6 +274,7 @@ class userController {
                     const { id } = req.params;
                     const {
                         email,
+                        oldPassword,
                         password,
                         firstName,
                         lastName,
@@ -287,20 +288,43 @@ class userController {
                         result = await streamUpload(req).catch((err) =>
                             next(ApiError.internal(err)),
                         );
+                        user?.set({
+                            imageUrl: result.url,
+                        });
                     }
-                    const hashPassword = password
-                        ? await bcrypt.hash(password, 10)
-                        : user?.password;
-                    user?.set({
-                        email: email || user.email,
-                        password: hashPassword,
-                        firstName: firstName || user.firstName,
-                        lastName: lastName || user.lastName,
-                        displayName: displayName || user.displayName,
-                        imageUrl: result.url,
-                    });
-                    await user?.save();
-                    return res.json(user);
+                    if (oldPassword && password) {
+                        const oldHashPassword = await bcrypt.hash(
+                            oldPassword,
+                            10,
+                        );
+                        const hashPassword = await bcrypt.hash(password, 10);
+                        if (oldHashPassword === user?.password) {
+                            user?.set({
+                                email: email || user.email,
+                                password: hashPassword,
+                                firstName: firstName || user.firstName,
+                                lastName: lastName || user.lastName,
+                                displayName: displayName || user.displayName,
+                            });
+                            await user?.save();
+                            return res.json(user);
+                        } else {
+                            next(
+                                ApiError.badRequest(
+                                    'Old password is not correct',
+                                ),
+                            );
+                        }
+                    } else {
+                        user?.set({
+                            email: email || user.email,
+                            firstName: firstName || user.firstName,
+                            lastName: lastName || user.lastName,
+                            displayName: displayName || user.displayName,
+                        });
+                        await user?.save();
+                        return res.json(user);
+                    }
                 } catch (error) {
                     if (error instanceof Error) {
                         next(ApiError.badRequest(error.message));
