@@ -283,47 +283,68 @@ class userController {
                     const user = await User.findOne({
                         where: { id },
                     });
-                    let result: any = user?.imageUrl;
-                    if (req.files?.img) {
-                        result = await streamUpload(req).catch((err) =>
-                            next(ApiError.internal(err)),
-                        );
-                        user?.set({
-                            imageUrl: result.url,
-                        });
-                    }
-                    if (oldPassword && password) {
-                        const oldHashPassword = await bcrypt.hash(
-                            oldPassword,
-                            10,
-                        );
-                        const hashPassword = await bcrypt.hash(password, 10);
-                        if (oldHashPassword === user?.password) {
+                    if (user) {
+                        let result: any = user?.imageUrl;
+                        if (req.files?.img) {
+                            result = await streamUpload(req).catch((err) =>
+                                next(ApiError.internal(err)),
+                            );
+                            user?.set({
+                                imageUrl: result.url,
+                            });
+                        }
+                        if (oldPassword && password) {
+                            const hashPassword = await bcrypt.hash(
+                                password,
+                                10,
+                            );
+
+                            if (
+                                bcrypt.compareSync(oldPassword, user.password)
+                            ) {
+                                user?.set({
+                                    email: email || user.email,
+                                    password: hashPassword,
+                                    firstName: firstName || user.firstName,
+                                    lastName: lastName || user.lastName,
+                                    displayName:
+                                        displayName || user.displayName,
+                                });
+                                await user?.save();
+                                const token = generateJWT(
+                                    user.id,
+                                    user.email,
+                                    user.role,
+                                );
+                                return res.json({ user, newToken: token });
+                            } else {
+                                next(
+                                    ApiError.badRequest(
+                                        'Old password is not correct',
+                                    ),
+                                );
+                            }
+                        } else {
                             user?.set({
                                 email: email || user.email,
-                                password: hashPassword,
                                 firstName: firstName || user.firstName,
                                 lastName: lastName || user.lastName,
                                 displayName: displayName || user.displayName,
                             });
                             await user?.save();
-                            return res.json(user);
-                        } else {
-                            next(
-                                ApiError.badRequest(
-                                    'Old password is not correct',
-                                ),
+                            const token = generateJWT(
+                                user.id,
+                                user.email,
+                                user.role,
                             );
+                            return res.json({ user, newToken: token });
                         }
                     } else {
-                        user?.set({
-                            email: email || user.email,
-                            firstName: firstName || user.firstName,
-                            lastName: lastName || user.lastName,
-                            displayName: displayName || user.displayName,
-                        });
-                        await user?.save();
-                        return res.json(user);
+                        next(
+                            ApiError.badRequest(
+                                'User with this id is not existed',
+                            ),
+                        );
                     }
                 } catch (error) {
                     if (error instanceof Error) {
