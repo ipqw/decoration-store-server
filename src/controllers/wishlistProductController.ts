@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import ApiError from '../error/apiError';
-import { Product, WishlistProduct } from '../database/models';
+import { Product, ProductInfo, WishlistProduct } from '../database/models';
 
 class cartWishlistController {
     createWishlistProduct = async (
@@ -40,8 +40,26 @@ class cartWishlistController {
         next: NextFunction,
     ) => {
         try {
-            const wishlistProduct = await WishlistProduct.findAll();
-            return res.json(wishlistProduct);
+            const { wishlistId } = req.query;
+            if (wishlistId) {
+                const wishlistProducts = await WishlistProduct.findAll({
+                    where: {
+                        wishlistId: Number(wishlistId),
+                    },
+                    include: [
+                        {
+                            model: Product,
+                            as: 'product',
+                            include: [
+                                { model: ProductInfo, as: 'product_infos' },
+                            ],
+                        },
+                    ],
+                });
+                return res.json(wishlistProducts);
+            }
+            const wishlistProducts = await WishlistProduct.findAll();
+            return res.json(wishlistProducts);
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
