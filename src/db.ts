@@ -10,7 +10,7 @@ const sequelize = new Sequelize(
         port: Number(process.env.DB_PORT),
         pool: {
             min: 0,
-            max: 3,
+            max: 1,
             idle: 10000,
         },
     },
