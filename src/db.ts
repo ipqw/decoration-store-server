@@ -2,9 +2,7 @@ import { Sequelize } from 'sequelize';
 import pg from 'pg';
 
 const sequelize = new Sequelize(
-    process.env.DB_NAME || '',
-    process.env.DB_USER || '',
-    process.env.DB_PASSWORD,
+    'postgres://kjlihpgg:2wXXw6H9oSxc5pcdJwJRLf7pYv9-PRwC@mel.db.elephantsql.com/kjlihpgg',
     {
         dialect: 'postgres',
         dialectModule: pg,
