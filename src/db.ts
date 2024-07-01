@@ -8,11 +8,6 @@ const sequelize = new Sequelize(
         dialectModule: pg,
         host: process.env.DB_HOST,
         port: Number(process.env.DB_PORT),
-        pool: {
-            min: 0,
-            max: 1,
-            idle: 10000,
-        },
     },
 );
 export default sequelize;
