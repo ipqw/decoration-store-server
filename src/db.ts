@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 import pg from 'pg';
 
 const sequelize = new Sequelize(
-    'postgres://xfzzcrmk:HauEv86-WpMNlqTn80w8WHlEEdXdA9fE@mel.db.elephantsql.com/xfzzcrmk',
+    'postgres://default:qJCcZX76KeyS@ep-curly-fire-a2ngpwjn.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require',
     {
         dialect: 'postgres',
         dialectModule: pg,
