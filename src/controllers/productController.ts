@@ -105,7 +105,7 @@ class productController {
         next: NextFunction,
     ) => {
         try {
-            const { limit } = req.params;
+            const { limit } = req.query;
             const products = await Product.findAll({
                 limit: Number(limit) || 40,
                 include: [
