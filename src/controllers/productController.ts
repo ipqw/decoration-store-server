@@ -141,7 +141,7 @@ class productController {
                     await product?.save();
                 }
             });
-            return res.json(req.query);
+            return res.json(products);
         } catch (error) {
             if (error instanceof Error) {
                 next(ApiError.badRequest(error.message));
